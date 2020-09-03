@@ -1,0 +1,15 @@
+# label 추가해보기
+apiVersion: v1
+kind: Pod
+metadata:
+  name: http-go
+  labels:
+    creation_method: manual
+    env: prod
+spec:
+  containers:
+  - name: http-go
+    image: healinyoon/http-go
+    ports:
+    - containerPort: 8080
+      protocol: TCP
