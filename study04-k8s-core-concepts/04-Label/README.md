@@ -90,3 +90,35 @@ $ kubectl get pod -l 'env=prod,creation_method'
 NAME      READY   STATUS    RESTARTS   AGE
 http-go   1/1     Running   0          11h
 ```
+
+# 연습문제(nginx-pod.yaml)
+```
+$ kubectl create -f nginx-pod.yaml 
+```
+
+app=nginx인 label 조회
+```
+$ kubectl get pod -l app=nginx
+NAME    READY   STATUS    RESTARTS   AGE
+nginx   1/1     Running   0          14m
+```
+
+app 명의 label을 기준으로 조회
+```
+$ kubectl get pod  -L appNAME         READY   STATUS    RESTARTS   AGE   APP
+http-go      1/1     Running   0          12h   
+http-go-v2   1/1     Running   0          57m   
+nginx        1/1     Running   0          15m   nginx
+```
+
+label 추가 및 확인
+```
+$ kubectl label pod nginx team=dev1
+pod/nginx labeled
+
+$ kubectl get pod --show-labels
+NAME         READY   STATUS    RESTARTS   AGE   LABELS
+http-go      1/1     Running   0          12h   creation_method=manual,env=prod,htest=foo1
+http-go-v2   1/1     Running   0          59m   creation_method=manual-v2
+nginx        1/1     Running   0          17m   app=nginx,team=dev1
+```
