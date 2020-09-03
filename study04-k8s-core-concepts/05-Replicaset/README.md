@@ -96,3 +96,130 @@ http-go-nk5jl   1/1     Running   0          12m     10.40.0.1   k8s-worker01   
 ```
 $ kubectl get nodes -w  # 이렇게 해놓고, 네트워크를 끊어보고 관찰
 ```
+
+레플레케이션 컨트롤러 정보 확인
+```
+$ kubectl get rc http-go -o wide
+NAME      DESIRED   CURRENT   READY   AGE   CONTAINERS   IMAGES               SELECTOR
+http-go   3         3         3       20m   http-go      healinyoon/http-go   app=http-go
+```
+
+레플리케이션 컨트롤러 삭제
+```
+$ kubectl delete rc http-go
+replicationcontroller "http-go" deleted
+```
+ 
+레플리케이션 컨트롤러 스케일링
+```
+방법 1)
+$ kubectl scale rc http-go --replicas=5
+replicationcontroller/http-go scaled
+
+$ kubectl get pod
+NAME            READY   STATUS    RESTARTS   AGE
+http-go-4xpzt   1/1     Running   0          2m
+http-go-6g9jh   1/1     Running   0          2m
+http-go-wqjmq   1/1     Running   0          81s
+http-go-x7d92   1/1     Running   0          2m
+http-go-xjpt8   1/1     Running   0          81s
+
+방법 2)
+$ kubectl edit rc http-go
+vim으로 파일이 열림. spec 하위의 replicas 수정
+
+$ kubectl get pod
+NAME            READY   STATUS    RESTARTS   AGE
+http-go-4xpzt   1/1     Running   0          4m58s
+http-go-x7d92   1/1     Running   0          4m58s
+
+
+방법 3)
+$ cp http-go-rc.yaml http-go-rc-v2.yaml
+$ vi http-go-rc-v2.yaml
+vim으로 파일이 열림. spec 하위의 replicas 수정
+
+$ kubectl apply -f http-go-rc-v2.yaml
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+replicationcontroller/http-go configured
+
+$ kubectl get pods
+NAME            READY   STATUS    RESTARTS   AGE
+http-go-4xpzt   1/1     Running   0          8m43s
+http-go-99lzc   1/1     Running   0          68s
+http-go-qkbhc   1/1     Running   0          68s
+http-go-sc8c9   1/1     Running   0          68s
+http-go-x7d92   1/1     Running   0          8m43s
+```
+
+# 레플리카셋
+
+- 쿠버네티스 1.8 버전부터 Deployment, Daemonset, ReplicaSet, SatetfulSet API가 베타로 업데이트되고, 1.9 버전부터 정식으로 업데이트 됨
+- 레플리카셋은 레플리케이션컨트롤러를 완전히 대체 가능
+- 일반적으로 레플리카셋을 직접 생성하지 않고 상위 수준의 디플로이먼트 리소스를 만들 때 자동으로 생성
+
+### 레플리케이션 컨트롤러 vs 레플리카셋
+
+- 거의 동일하게 동작
+- 레플리카셋이 더 풍부한 pod selector 사용 가능
+  - 레플리케이션 컨트롤러: 특정 label의 key, value가 일치하는 pod 매치
+  - 레플리카셋: 유연한  label을 매칭하는 matchExpressions 사용하여 pod 매치
+
+# 레플리카셋 실습
+
+레플리카셋 생성
+```
+$ kubectl create -f frontend.yaml
+replicaset.apps/frontend created
+```
+
+레플리카셋 확인
+```
+$ kubectl get rs
+NAME       DESIRED   CURRENT   READY   AGE
+frontend   3         3         3       4m53s
+```
+
+pod 확인
+```
+$ kubectl get pod --show-labels
+NAME             READY   STATUS    RESTARTS   AGE     LABELS
+frontend-9lrkc   1/1     Running   0          4m23s   tier=frontend
+frontend-s9qn4   1/1     Running   0          4m23s   tier=frontend
+frontend-sspqg   1/1     Running   0          4m23s   tier=frontend
+```
+
+rs 상세 조회
+```
+$ kubectl describe rs frontend
+Name:         frontend
+Namespace:    default
+Selector:     tier=frontend
+Labels:       app=guestbook
+              tier=frontend
+Annotations:  <none>
+Replicas:     3 current / 3 desired
+Pods Status:  3 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:  tier=frontend
+  Containers:
+   php-redis:
+    Image:        gcr.io/google_samples/gb-frontend:v3
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Events:
+  Type    Reason            Age    From                   Message
+  ----    ------            ----   ----                   -------
+  Normal  SuccessfulCreate  6m25s  replicaset-controller  Created pod: frontend-s9qn4
+  Normal  SuccessfulCreate  6m25s  replicaset-controller  Created pod: frontend-9lrkc
+  Normal  SuccessfulCreate  6m25s  replicaset-controller  Created pod: frontend-sspqg
+```
+
+rs 삭제
+```
+$ kubectl delete rs frontend
+replicaset.apps "frontend" deleted
+```
