@@ -6,13 +6,13 @@
   - 서비스의 레이블 셀렉터를 수정하여 간단하게 수정 가능
   - 단, 하위 호환성을 제공해줘야함(구 버전에서 지원하던 것은 새 버전에서도 지원해야 함)
 
-### 구현: deployment 생성
+## 구현: deployment 생성
 
 - Label selector, replica 수, pod template 정보 필요
 - Deployment 업데이트 전략을 yaml에 지정하여 사용 가능
 - 반드시 `kubectl create -f xx.yaml` 실행시 `--record=true` 옵션을 붙여줘야 백업 가능
 
-### deployement 업데이트 전략(Strategy Type)
+## deployement 업데이트 전략(Strategy Type)
 
 - RollingUpdate(기본값)
   - 오래된 Pod를 하나씩 제거하는 동시에 새로운 Pod 추가
@@ -24,12 +24,12 @@
    - 여러 버전을 동시에 실행 불가능
    - 잠깐의 다운 타임 발생
 
-### 롤백
+## 롤백
 
 - 롤백을 실행하면 이전 업데이트 상태로 돌아감
 - 롤백을 하여도 히스토리의 리버전 상태는 이전 상태로 돌아가지 않음
 
-### 롤링 업데이터 세부 전략
+## 롤링 업데이터 세부 전략
 : Pod를 최대/최소 몇개까지 유지할 것인지 설정
 
 - maxSurge
@@ -44,7 +44,7 @@
 
 # 업데이트를 실패하는 경우
 
-### 업데이트를 실패하는 케이스
+## 업데이트를 실패하는 케이스
 - 부족한 할당량(Insufficient quota): cpu, ram 등이 부족
 - 레디네스 프로브 실패(Readiness probe failures): Pod가 준비되지 않은 경우
 - 이미지 가져오기 오류(Image pull errors): 해당 이미지가 존재하지 않는 경우
@@ -52,7 +52,7 @@
 - 제한 범위(Limit ranges): 공간마다 할당된 자원을 초과하는 경우
 - 응용 프로그램 런타임 구성 오류(Application runtime misconfiguration)
 
-### 업데이트를 실패하는 경우에는 기본적으로 600초 후에 업데이트를 중지
+## 업데이트를 실패하는 경우에는 기본적으로 600초 후에 업데이트를 중지
 
 설정
 ```
@@ -62,7 +62,7 @@ spec:
 
 # 롤링 업데이트와 롤백 실습 - 1
 
-#### 실행 및 확인
+## 실행 및 확인
 
 실행
 ```
@@ -88,7 +88,7 @@ NAME                                DESIRED   CURRENT   READY   AGE
 replicaset.apps/http-go-ccb794f48   3         3         3       19s
 ```
 
-#### deployment의 상새 내용 확인
+## deployment의 상새 내용 확인
 
 - Replicas, StrategyType, Events 등을 확인 가능
 ```
@@ -126,7 +126,7 @@ Events:
   Normal  ScalingReplicaSet  112s  deployment-controller  Scaled up replica set http-go-ccb794f48 to 3
 ```
 
-#### yaml 파일을 확인하고 싶을 때
+## yaml 파일을 확인하고 싶을 때
 
 ```
 $ kubectl get deploy http-go -o yaml
@@ -287,7 +287,7 @@ status:
 
 애플리케이션 모니터링 시스템을 만들고, 실제로 업데이트시 애플리케이션이 무중단 되는지 관찰
 
-#### deploy 생성
+## deploy 생성
 
 (실습을 위햬) 기존의 모든 애플리케이션 제거
 ```
@@ -313,7 +313,7 @@ REVISION  CHANGE-CAUSE
 1         kubectl create --filename=http-go-deploy-v1.yaml --record=true
 ```
 
-#### patch 명령어로 minReadySeconds 입력
+## patch 명령어로 minReadySeconds 입력
 
 `patch` 명령어로 내부 설정(=yaml 파일)을 수정할 수 있음
 ```
@@ -321,7 +321,7 @@ $ kubectl patch deploy http-go -p '{"spec": {"minReadySeconds": 10}}'   # ready�
 deployment.apps/http-go patched
 ```
 
-#### 로드밸런서 생성
+## 로드밸런서 생성
 
 서비스(로드밸런서) 생성
 ```
@@ -349,7 +349,7 @@ Welcome! v1
 Welcome! v1
 ```
 
-#### 업데이트 수행
+## 업데이트 수행
 
 `set images` 명령어를 이용한 업데이트 수행
 ```
@@ -412,11 +412,11 @@ Welcome! v2
 Welcome! v2
 ```
 
-#### !!! 주의: --record=true
+## !!! 주의: --record=true
 
 위의 `$ kubectl set image deploy http-go http-go=gasbugs/http-go:v2` 명령에서 `--record=true`을 옵션으로 주지 않았기 때문에  
 
-히스토리를 출력해보면 다음과 같이 방금 전의 업데이트가 기록되지 않은 것을 볼 수 있다.
+히스토리를 출력해보면 다음과 같이 방금 전의 업데이트가 기록되지 않음 => 백업 불가
 ```
 $ kubectl rollout history deploy http-go
 deployment.apps/http-go
@@ -442,8 +442,7 @@ REVISION  CHANGE-CAUSE
 2         kubectl set image deploy http-go http-go=gasbugs/http-go:v2 --record=true
 ```
 
-그런데 왜 REVISION 번호가 바뀌지 않고 2번에 덮어쓰여졌는가?  
-=> replicas가 변경된 내용이 없었기 때문  
+그런데 왜 REVISION 번호가 바뀌지 않고 2번에 덮어쓰여졌는가? => replicas가 변경된 내용이 없었기 때문  
 이게 무슨 소리냐면, 현재 relicaset을 출력해보면 다음과 같음
 ```
 $ kubectl get rs
@@ -460,7 +459,7 @@ http-go-ccb794f48    0         0         0       64m
 
 이번에는 다른 방법으로 업데이트 진행
 
-#### 업데이트
+## 업데이트
 
 `edit` 명령어를 사용하여 deployment yaml 파일 수정
 ```
@@ -477,7 +476,7 @@ deployment.apps/http-go edited
         name: http-go
 ```
 
-#### Replicaset 확인
+## Replicaset 확인
 
 새롭게 `http-go-855b9bcff4`이 추가된 것을 확인할 수 있음
 ```
@@ -488,7 +487,7 @@ http-go-855b9bcff4   3         3         3       84s
 http-go-ccb794f48    0         0         0       70m
 ```
 
-#### Pod 확인
+## Pod 확인
 
 새로 생성된 Pod들 잘 돌아감
 ```
@@ -500,7 +499,7 @@ http-go-855b9bcff4-tqcfd   1/1     Running   0          114s
 http-go-855b9bcff4-tvkxc   1/1     Running   0          96s
 ```
 
-#### 모니터링 확인
+## 모니터링 확인
 
 v3로 잘 변경되고 무중단으로 애플리케이션 실행 중
 ```
@@ -513,7 +512,7 @@ Welcome! v3
 Welcome! v3
 ```
 
-#### history 확인
+## history 확인
 
 REVISION 번호 3이 추가된 것 확인
 ```
@@ -530,17 +529,16 @@ REVISION  CHANGE-CAUSE
 
 현재 v3로 애플리케이션이 돌아가고 있는데, `undo`를 사용하여 롤백
 
-#### 롤백 실행
+## 롤백 실행
 
 ```
 $ kubectl rollout undo deploy http-go
 deployment.apps/http-go rolled back
 ```
 
-#### 히스토리 확인
+## 히스토리 확인
 
-REVISION 번호 2는 제거되고 4가 추가된 것 확인  
-=> undo를 실행하면서 4번이 최근것이 되었다는 의미
+REVISION 번호 2는 제거되고 4가 추가된 것 확인  => undo를 실행하면서 4번이 최근것이 되었다는 의미
 
 ```
 $ kubectl rollout history deploy http-go
@@ -551,7 +549,7 @@ REVISION  CHANGE-CAUSE
 4         kubectl set image deploy http-go http-go=gasbugs/http-go:v2 --record=true
 ```
 
-#### 모니터링 확인
+## 모니터링 확인
 
 애플리케이션이 롤백되어 v2로 돌아가는 것 확인
 ```
@@ -565,14 +563,14 @@ Welcome! v2
 
 # 롤링 업데이트와 롤백 실습 - 4(특정 버전으로 롤백)
 
-#### `--to-revision={REVISION 버전 번호}으로` 특정 버전으로 롤백
+## `--to-revision={REVISION 버전 번호}으로` 특정 버전으로 롤백
 
 ```
 $ kubectl rollout undo deploy http-go --to-revision=1
 deployment.apps/http-go rolled back
 ```
 
-#### 히스토리 확인
+## 히스토리 확인
 
 REVISION 번호 1은 제거되고 5가 추가된 것 확인  
 => undo를 실행하면서 5번이 최근것이 되었다는 의미
@@ -585,7 +583,7 @@ REVISION  CHANGE-CAUSE
 5         kubectl create --filename=http-go-deploy-v1.yaml --record=true
 ```
 
-#### 모니터링 확인
+## 모니터링 확인
 
 애플리케이션이 롤백되어 v1로 돌아가는 것 확인
 ```
