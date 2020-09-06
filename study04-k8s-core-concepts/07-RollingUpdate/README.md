@@ -1,12 +1,12 @@
 # 애플리케이션 롤릴 업데이트
 
-### 기존의 업데이트 방식 vs Rolling Update 방식
+## 기존의 업데이트 방식 vs Rolling Update 방식
 | 구분 | 비교 |
 | --- | --- |
 | 기존 | 기존 모든 포드를 삭제 후 새로운 포드 생성 => 잠깐의 다운 타임 발생 |
 | Rolling Update | * 새 버전을 실행하는 동안 로드밸런서(서비스)가 구 버전 Pod와 연결<br/>* 서비스의 레이블 셀렉터를 수정하여 간단하게 수정 가능<br/>* 단, 하위 호환성을 제공해줘야함(구 버전에서 지원하던 것은 새 버전에서도 지원해야 함)|
 
-### Rolling Update를 구현하는 방법: Deployment 생성시 Rolling Update 전략 명시
+## Rolling Update를 구현하는 방법: Deployment 생성시 Rolling Update 전략 명시
 
 아래의 3가지 정보를 Deployment yaml 파일에 작성하여 업데이트 전략 명시
 - Label Selector: 어떤 Label을 가진 Pod를 연결할 것인지에 대한 정보
@@ -39,7 +39,7 @@ spec:
 
 또한 반드시 `kubectl create -f xx.yaml` 실행시 `--record=true` 옵션을 붙여줘야 백업 가능 <-- 히스토리 정보를 남기는 옵션
 
-### Deployment Update 전략의 종류(Strategy Type)
+## Deployment Update 전략의 종류(Strategy Type)
 
 - RollingUpdate(기본값)
   - 오래된 Pod를 하나씩 제거하는 동시에 새로운 Pod 추가
@@ -51,7 +51,7 @@ spec:
    - 여러 버전을 동시에 실행 불가능
    - 잠깐의 다운 타임 발생
 
-### 롤링 업데이터 세부 전략
+## 롤링 업데이터 세부 전략
 
 : Pod를 최대/최소 몇개까지 유지할 것인지 설정
 
@@ -65,7 +65,7 @@ spec:
   - 동작하지 않는 Pod의 개수 설정
   - replica = 4개인 경우 25%이면, maxSurge = 1개로 설정 => 총 개수 4-1개는 동시 Pod 운영
 
-### 업데이트 명령어
+## 업데이트 명령어
 
 `set images` 명령어를 이용한 업데이트 수행
 ```
@@ -89,7 +89,7 @@ $ kubectl edit deploy http-go --record=true
 
 # 업데이트를 실패하는 경우
 
-### 업데이트를 실패하는 케이스
+## 업데이트를 실패하는 케이스
 - 부족한 할당량(Insufficient quota): cpu, ram 등이 부족
 - 레디네스 프로브 실패(Readiness probe failures): Pod가 준비되지 않은 경우
 - 이미지 가져오기 오류(Image pull errors): 해당 이미지가 존재하지 않는 경우
@@ -97,7 +97,7 @@ $ kubectl edit deploy http-go --record=true
 - 제한 범위(Limit ranges): 공간마다 할당된 자원을 초과하는 경우
 - 응용 프로그램 런타임 구성 오류(Application runtime misconfiguration)
 
-### 업데이트를 실패하는 경우에는 기본적으로 600초 후에 업데이트를 중지
+## 업데이트를 실패하는 경우에는 기본적으로 600초 후에 업데이트를 중지
 
 설정
 ```
@@ -110,12 +110,12 @@ spec:
 - 롤백을 실행하면 이전 업데이트 상태로 돌아감
 - 롤백을 하여도 히스토리의 리버전 상태는 이전 상태로 돌아가지 않음
 
-### 롤백 명령어
+## 롤백 명령어
 ```
 $ kubectl rollout undo deploy {deploy name}
 ```
 
-### 특정 revision으로 롤백 명령어
+## 특정 revision으로 롤백 명령어
 ```
 $ kubectl rollout undo deploy {deploy 명} --to-revision={revision 번호}
 ```
@@ -125,7 +125,7 @@ $ kubectl rollout undo deploy {deploy 명} --to-revision={revision 번호}
 
 ## 실행 및 확인
 
-실행
+deployment 실행
 ```
 $ kubectl create -f http-go-deploy-v1.yaml
 deployment.apps/http-go created
@@ -154,6 +154,10 @@ replicaset.apps/http-go-ccb794f48   3         3         3       19s
 - Replicas, StrategyType, Events 등을 확인 가능
 ```
 $ kubectl describe deploy http-go
+```
+
+아래 내용이 출력됨
+```
 Name:                   http-go
 Namespace:              default
 CreationTimestamp:      Fri, 04 Sep 2020 05:43:12 +0000
@@ -191,6 +195,10 @@ Events:
 
 ```
 $ kubectl get deploy http-go -o yaml
+```
+
+아래 내용이 출력됨
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -348,7 +356,7 @@ status:
 
 애플리케이션 모니터링 시스템을 만들고, 실제로 업데이트시 애플리케이션이 무중단 되는지 관찰
 
-## deploy 생성
+## 실행 및 확인
 
 (실습을 위햬) 기존의 모든 애플리케이션 제거
 ```
@@ -623,7 +631,9 @@ Welcome! v2
 
 # 롤링 업데이트와 롤백 실습 - 5(특정 버전으로 롤백)
 
-## `--to-revision={REVISION 버전 번호}으로` 특정 버전으로 롤백
+## 특정 버전으로 롤백
+
+`--to-revision={REVISION 버전 번호}` 옵션 사용
 
 ```
 $ kubectl rollout undo deploy http-go --to-revision=1
@@ -665,7 +675,7 @@ Welcome! v1
 - alpine:1.19 롤링 업데이트 수행
 - nginx:1.18 롤백 수행
 
-#### 참고 꿀 팁
+## 참고 꿀 팁
 
 `--dry-run=client` 옵션을 사용하면 실제로 생성하지 않고 **문법이 맞는지 확인**해주는 꿀 기능이 있음
 ```
@@ -673,7 +683,7 @@ $ kubectl run --image alpine:3.4 alpine-deploy --dry-run=client
 pod/alpine-deploy created (dry run)
 ```
 
-#### alpine-deploy-v1.yaml 생성
+## nginx-deploy-v1.yaml 생성
 
 ```
 apiVersion: apps/v1
@@ -705,14 +715,14 @@ spec:
 
 ```
 
-#### 실행
+## 실행
 
 ```
 $ kubectl create -f nginx-deploy-v1.yaml --record=true
 deployment.apps/nginx-deployment created
 ```
 
-#### 히스토리 확인
+## 히스토리 확인
 
 ```
 $ kubectl rollout history deploy nginx-deployment
@@ -721,9 +731,9 @@ REVISION  CHANGE-CAUSE
 1         kubectl create --filename=nginx-deploy-v1.yaml --record=true
 ```
 
-#### image 업데이트
+## image 업데이트
 
-`edit` 명령어 수행
+`edit` 명령어로 업데이트 수행
 ```
 $ kubectl edit deploy nginx-deployment --record=true
 deployment.apps/nginx-deployment edited
@@ -738,7 +748,7 @@ deployment.apps/nginx-deployment edited
         name: nginx-deployment
 ```
 
-업데이트 확인
+## Pod, Replicas 업데이트 확인
 ```
 $ kubectl get pod
 NAME                               READY   STATUS    RESTARTS   AGE
@@ -752,7 +762,7 @@ nginx-deployment-56c949c7b    3         3         3       100s
 nginx-deployment-78b6d5689f   0         0         0       5m10s
 ```
 
-히스토리 확인
+## 히스토리 확인
 ```
 $ kubectl rollout history deploy nginx-deployment
 deployment.apps/nginx-deployment
@@ -761,7 +771,7 @@ REVISION  CHANGE-CAUSE
 2         kubectl edit deploy nginx-deployment --record=true
 ```
 
-#### image 롤백
+## image 롤백 실행 및 히스토리 확인
 
 롤백 실행
 ```
