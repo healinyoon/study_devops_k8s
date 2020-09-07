@@ -17,6 +17,9 @@
 ### 방법 1) expose 명령어 사용
 
 `kubectl expose`로 생성(가장 쉬운 방법)  
+```
+$ kubectl expose deployment {Deployement 명} --type=LoadBalancer --name=my-servic
+```
 
 ### 방법 2) yaml 파일로 버전 관리 가능
 
@@ -45,17 +48,19 @@ $ kubectl create -f {yaml 파일 명}
 $ kubectl get svc
 ```
 
-# Service 로드밸런싱 기능 확인
+# Service 세부 기능
+
+### Service 로드밸런싱 기능 확인
 
 * Service를 생성하면 EXTERNAL -IP를 아직 받지 못한 것을 확인
 * `kubectl exec {Pod 명} --curl` 명령어로 확인
 
-# Pod간 통신을 위한 ClusterIP
+### Pod간 통신을 위한 ClusterIP
 
 * 가장 기본인 Service의 타입
 * 외부에는 노출되지 않고 내부에서만 사용하기 위한 것
 
-# Service 세션 고정하기
+### Service 세션 고정하기
 
 * Service가 다수의 Pod로 구성하면 웹 서비스의 세션이 유지 되지 않음
   * 사용자의 기록을 저장되지 않음
@@ -63,16 +68,28 @@ $ kubectl get svc
 
 **=> sessionAffinity: ClientIP 옵션 사용**
 
-# 다중 Port 서비스 방법
+yaml 파일 예시)
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-go-svc
+spec:
+  sessionAffinity: ClientIP
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: http-go
+```
+
+### 다중 Port 서비스 방법
 
 서버에 여러 Port를 한꺼번에 지원하고 싶을 때 사용
 * Port를 그대로 나열해서 사용
 * rediraction 방식
 
-#### Tip!
-
-yaml 파일의 리스트(배열) 형식  
-예)
+yaml 파일 예시)
 ```
 spec:
   sessionAffinity: ClientIP
@@ -85,7 +102,10 @@ spec:
     targetPort: 8443
 ```
 
+**Tip!**
+'s'가 붙는 속성은 yaml 파일의 리스트(배열) 형식  
 ports 외에도 containers 등 다양한 속성이 복수개의 요소를 가짐
+
 
 # Service하는 IP 정보 확인
 
