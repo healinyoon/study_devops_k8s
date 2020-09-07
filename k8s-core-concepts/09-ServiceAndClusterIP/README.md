@@ -83,7 +83,7 @@ spec:
     app: http-go
 ```
 
-### 다중 Port 서비스 방법
+### 다중 Ports 서비스 방법
 
 서버에 여러 Port를 한꺼번에 지원하고 싶을 때 사용
 * Port를 그대로 나열해서 사용
@@ -107,7 +107,7 @@ spec:
 ports 외에도 containers 등 다양한 속성이 복수개의 요소를 가짐
 
 
-# Service하는 IP 정보 확인
+### Service하는 IP 정보 확인
 
 * 서비스 세부 사항에는 연결된 IP 정보가 있음  
 * `describe` 명령어로 조회
@@ -122,7 +122,7 @@ EndPoints:  x.x.x.x:xxxx, x.x.x.x:xxxx
 ...
 ```
 
-# 외부 IP 연결 설정하기(yaml)
+### 외부 IP 연결 설정하기(yaml)
 
 * Service와 Endpoints 리소스 모두 생성 필요
 * 외부에 로드밸런싱할 수 있도록 함(내부 -> 외부로 나갈 때)
@@ -151,8 +151,8 @@ subsets:
   ports:
   - port: 80
 ```
-
+ 
 * Service와 Endpoints 연결 구조
 [](/images/9-ServiceAndClusterIP-externalIP.jpeg)
 
-그림 출저: 인프런-DevOps를 위한 쿠버네티스마스터: 서비스와 ClusterIP 소개
+그림 출처: 인프런-DevOps를 위한 쿠버네티스마스터: 서비스와 ClusterIP 소개
