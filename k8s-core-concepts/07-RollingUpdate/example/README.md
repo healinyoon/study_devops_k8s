@@ -28,7 +28,7 @@ replicaset.apps/http-go-ccb794f48   3         3         3       19s
 
 ### Deployment의 상세 내용 확인
 
-- Replicas, StrategyType, Events 등을 확인 가능
+Replicas, StrategyType, Events 등을 확인 가능
 ```
 $ kubectl describe deploy http-go
 ```
@@ -85,91 +85,9 @@ metadata:
   generation: 1
   labels:
     app: http-go
-  managedFields:
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:labels:
-          .: {}
-          f:app: {}
-      f:spec:
-        f:progressDeadlineSeconds: {}
-        f:replicas: {}
-        f:revisionHistoryLimit: {}
-        f:selector:
-          f:matchLabels:
-            .: {}
-            f:app: {}
-        f:strategy:
-          f:rollingUpdate:
-            .: {}
-            f:maxSurge: {}
-            f:maxUnavailable: {}
-          f:type: {}
-        f:template:
-          f:metadata:
-            f:labels:
-              .: {}
-              f:app: {}
-          f:spec:
-            f:containers:
-              k:{"name":"http-go"}:
-                .: {}
-                f:image: {}
-                f:imagePullPolicy: {}
-                f:name: {}
-                f:ports:
-                  .: {}
-                  k:{"containerPort":8080,"protocol":"TCP"}:
-                    .: {}
-                    f:containerPort: {}
-                    f:protocol: {}
-                f:resources: {}
-                f:terminationMessagePath: {}
-                f:terminationMessagePolicy: {}
-            f:dnsPolicy: {}
-            f:restartPolicy: {}
-            f:schedulerName: {}
-            f:securityContext: {}
-            f:terminationGracePeriodSeconds: {}
-    manager: kubectl-create
-    operation: Update
-    time: "2020-09-04T05:43:12Z"
-  - apiVersion: apps/v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:metadata:
-        f:annotations:
-          .: {}
-          f:deployment.kubernetes.io/revision: {}
-      f:status:
-        f:availableReplicas: {}
-        f:conditions:
-          .: {}
-          k:{"type":"Available"}:
-            .: {}
-            f:lastTransitionTime: {}
-            f:lastUpdateTime: {}
-            f:message: {}
-            f:reason: {}
-            f:status: {}
-            f:type: {}
-          k:{"type":"Progressing"}:
-            .: {}
-            f:lastTransitionTime: {}
-            f:lastUpdateTime: {}
-            f:message: {}
-            f:reason: {}
-            f:status: {}
-            f:type: {}
-        f:observedGeneration: {}
-        f:readyReplicas: {}
-        f:replicas: {}
-        f:updatedReplicas: {}
-    manager: kube-controller-manager
-    operation: Update
-    time: "2020-09-04T05:43:23Z"
+  
+(중략)
+  
   name: http-go
   namespace: default
   resourceVersion: "342721"
@@ -187,53 +105,15 @@ spec:
       maxSurge: 25%             # 개수 or percentage로 입력 가능
       maxUnavailable: 25%
     type: RollingUpdate
-  template:
-    metadata:
-      creationTimestamp: null
-      labels:
-        app: http-go
-    spec:
-      containers:
-      - image: gasbugs/http-go:v1
-        imagePullPolicy: IfNotPresent
-        name: http-go
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
-status:
-  availableReplicas: 3
-  conditions:
-  - lastTransitionTime: "2020-09-04T05:43:23Z"
-    lastUpdateTime: "2020-09-04T05:43:23Z"
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: "True"
-    type: Available
-  - lastTransitionTime: "2020-09-04T05:43:12Z"
-    lastUpdateTime: "2020-09-04T05:43:23Z"
-    message: ReplicaSet "http-go-ccb794f48" has successfully progressed.
-    reason: NewReplicaSetAvailable
-    status: "True"
-    type: Progressing
-  observedGeneration: 1
-  readyReplicas: 3
-  replicas: 3
-  updatedReplicas: 3
+
+(중략)
 ```
 
 # 롤링 업데이트와 롤백 실습 - 2
 
 애플리케이션 모니터링 시스템을 만들고, 실제로 업데이트시 애플리케이션이 무중단 되는지 관찰
 
-### (실습을 위햬) 기존의 모든 애플리케이션 제거
+### (실습을 위해) 기존의 모든 애플리케이션 제거
 ```
 $ kubectl delete all --all
 ```
@@ -269,7 +149,7 @@ $ kubectl patch deploy http-go -p '{"spec": {"minReadySeconds": 10}}'   # ready�
 deployment.apps/http-go patched
 ```
 
-#### 로드밸런서 생성 및 확인
+### 로드밸런서 생성 및 확인
 
 서비스(로드밸런서) 생성
 ```
