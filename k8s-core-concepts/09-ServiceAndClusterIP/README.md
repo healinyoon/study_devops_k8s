@@ -40,7 +40,7 @@ spec:
 
 yaml 파일 실행
 ```
-$ kubectl create -f {yaml 파일 명}
+$ kubectl create -f {Service yaml}
 ```
 
 생성된 Service 확인
