@@ -162,7 +162,7 @@ namespace "office" deleted
 
 # 연습문제
 
-### 현재 시스템에는 몇 개의 Namespace 존재하는가? 4개
+### Q1. 현재 시스템에는 몇 개의 Namespace 존재하는가? 4개
 ```
 $ kubectl get ns
 NAME              STATUS   AGE
@@ -172,7 +172,7 @@ kube-public       Active   3d21h
 kube-system       Active   3d21h
 ```
 
-### kube-system에는 몇 개의 pod가 존재하는가? 13개
+### Q2. kube-system에는 몇 개의 pod가 존재하는가? 13개
 ```
 $ kubectl get pod -n kube-system
 NAME                                   READY   STATUS    RESTARTS   AGE
@@ -190,7 +190,7 @@ weave-net-hgj79                        2/2     Running   0          3d21h
 weave-net-hj2gf                        2/2     Running   0          3d21h
 ```
 
-### ns-jenkins namespace를 생성하고, jenkins pod를 배치해라
+### Q3. ns-jenkins namespace를 생성하고, jenkins pod를 배치해라
 
 1) k8s docs에서 pod 템플릿 복사
 ```
@@ -249,7 +249,7 @@ NAME      READY   STATUS    RESTARTS   AGE
 jenkins   1/1     Running   0          65s
 ```
 
-### coredns는 어느 namespace가 존재하는가? kube-system
+### Q4. coredns는 어느 namespace가 존재하는가? kube-system
 
 관리자 입장에서 조회하는 것
 ```
