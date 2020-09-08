@@ -33,9 +33,9 @@ spec:
   selector:
     app: MyApp          <-- Label이 MyApp인 Pod에 로드 밸런싱을 해준다
   ports:
-    - protocol: TCP     
-      port: 80          <-- 외부 접속 port
-      targetPort: 9376  <-- Pod 오픈 port
+  - protocol: TCP     
+    port: 80          <-- 외부 접속 port
+    targetPort: 9376  <-- Pod 오픈 port
 ```
 
 yaml 파일 실행
