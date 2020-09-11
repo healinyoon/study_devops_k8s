@@ -160,6 +160,6 @@ subsets:
 ```
  
 * Service와 Endpoints 연결 구조
-[](/images/9-ServiceAndClusterIP-externalIP.jpeg)
+![](/images/9-ServiceAndClusterIP-externalIP.jpeg)
 
 그림 출처: 인프런-DevOps를 위한 쿠버네티스마스터: 서비스와 ClusterIP 소개
