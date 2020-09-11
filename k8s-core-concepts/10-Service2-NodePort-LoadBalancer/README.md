@@ -15,7 +15,7 @@
 
 # NodePort
 
-![](/images/10-Service2-NodePort-LoadBalancer-k8s-archi.png)  
+[](/images/10-Service2-NodePort-LoadBalancer-k8s-archi.png)  
 출처: https://en.wikipedia.org/wiki/Kubernetes
 
 ### NodePort 생성하기
