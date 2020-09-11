@@ -12,6 +12,18 @@
 1) 로드 밸런싱
 2) Pod 선택
 
+# Service 타입
+
+`ServiceTypes`를 통해 원하는 Service 종류를 지정할 수 있다. 기본 값은 `ClusterIP`이다.
+
+| Type | 설명 |
+| --- | --- |
+| ClusterIP | Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default ServiceType. |
+| NodePort | Exposes the Service on each Node's IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You'll be able to contact the NodePort Service, from outside the cluster, by requesting <NodeIP>:<NodePort>. |
+| LoadBalancer | Exposes the Service externally using a cloud provider's load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created. |
+
+이번 장에서는 `ClusterIP`로 Service 하는 방법을 정리하였다.
+
 # Service 생성 방법
 
 ### 방법 1) expose 명령어 사용
@@ -54,11 +66,6 @@ $ kubectl get svc
 
 * Service를 생성하면 EXTERNAL -IP를 아직 받지 못한 것을 확인
 * `kubectl exec {Pod 명} --curl` 명령어로 확인
-
-### Pod간 통신을 위한 ClusterIP
-
-* 가장 기본인 Service의 타입
-* 외부에는 노출되지 않고 내부에서만 사용하기 위한 것
 
 ### Service 세션 고정하기
 
