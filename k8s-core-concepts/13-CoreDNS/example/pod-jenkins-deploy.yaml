@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: srv-jenkins
+spec:
+  selector:
+    app: pod-jenkins-deploy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+---
+  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: pod-jenkins-deploy
+  name: pod-jenkins-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-jenkins-deploy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pod-jenkins-deploy
+    spec:
+      containers:
+      - image: jenkins
+        name: jenkins
+        resources: {}
+status: {}
