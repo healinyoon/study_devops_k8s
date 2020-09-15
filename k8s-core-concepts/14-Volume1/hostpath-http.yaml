@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-http
+spec:
+  containers:
+  - image: httpd
+    name: web-server
+    volumeMounts:
+    - mountPath: /usr/local/apache2/htdocs
+      name: html
+      readOnly: true
+    ports:
+    - containerPort: 80
+  volumes:
+  - name: html
+    hostPath:
+      path: /var/htdocs/
+      type: Directory

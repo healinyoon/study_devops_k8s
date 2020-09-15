@@ -37,7 +37,7 @@ ns-aravom             Active   15m
 # kubectl create deploy --image=nginx  nginx --dry-run=client -o yaml > nginx-service-deploy.yaml
 ```
 
-* `nginx-service-deploy.yaml` 파일 Deployment 수정: spec에 Port 추가
+* `nginx-service-deploy.yaml` 파일 Deployment 수정: spec에 ports 정보 추가
 ```
     spec:
       containers:
@@ -110,7 +110,7 @@ spec:
         ports:
         - containerPort: 80
         resources: {}
-status: {}
+: {}
 ```
 
 ### 3) `ns-aravom` namespace에 up
