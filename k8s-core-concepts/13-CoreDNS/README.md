@@ -2,9 +2,9 @@
 
 [※ 쿠버네티스 coreDNS 공식 문서](https://kubernetes.io/ko/docs/tasks/administer-cluster/coredns/)
 
-# CoreDNS 정의 및 사용 방법
+# CoreDNS 개요
 
-Service를 생성하면 대응하는 DNS entry가 생성
+Service를 생성하면 대응하는 DNS entry가 생성된다.
 
 ### 형식
 
@@ -52,12 +52,11 @@ Welcome! http-go-5c6f458dc9-wtpdq
 이미지 출처: https://weekly-geekly.github.io/articles/331872/index.html
 
 * 해당 DNS에는 `configmap` 저장소를 사용해 설정 파일을 컨트롤
-* `Corefile`을 통해 현재 클러스터의 NS를 지정
 ```
 $ kubectl get configmap coredns -n kube-system -o yaml
 apiVersion: v1
 data:
-  Corefile: |
+  Corefile: |       # NS 지정
     .:53 {
         errors
         health {
@@ -78,33 +77,17 @@ data:
         reload
         loadbalance
     }
-kind: ConfigMap
-metadata:
-  creationTimestamp: "2020-09-08T07:35:37Z"
-  managedFields:
-  - apiVersion: v1
-    fieldsType: FieldsV1
-    fieldsV1:
-      f:data:
-        .: {}
-        f:Corefile: {}
-    manager: kubeadm
-    operation: Update
-    time: "2020-09-08T07:35:37Z"
-  name: coredns
-  namespace: kube-system
-  resourceVersion: "218"
-  selfLink: /api/v1/namespaces/kube-system/configmaps/coredns
-  uid: c23bf672-8cf4-41ac-9629-70dc29f49f2f
+(중략)
 ```
 
 ### Pod에서도 Subdomain을 사용하면 DNS 서비스 사용 가능
 
-* yaml 파일의 hostname은 Pod의 `metadata.name`을 따름(필요한 경우 hostname을 따로 선택 가능)
-* Subdomain은 서브 도메인을 지정하는데 사용 -> 서브 도메인을 지정하면 FQDN 사용 가능
+* 원래 CoreDNS는 Service까지만 조회 가능했으나, Pod에서도 Subdomain을 사용하면 DNS 서비스 사용 가능
+* yaml 파일의 hostname은 Pod의 `metadata.name`의 value를 따름(필요한 경우 hostname을 따로 선택 가능)
+* `subdomain` object는 서브 도메인을 지정하는데 사용 -> 서브 도메인을 지정하면 FQDN 사용 가능
   * FQDN 형식: {hostname}.{subdomain}.{namespace}.svc.cluster-domain.example
   * FQDN 예시: busybox-1.default-subdomain.default.svc.cluster-domain.example
 
-![](/k8s-core-concepts/images/12-Network-11.png)
+![](/k8s-core-concepts/images/13-CoreDNS-2.png)
 
-이미지 출처: 인프런 - devops를 위한 kubernetes 마스터
+이미지 출처: https://weekly-geekly.github.io/articles/331872/index.html
