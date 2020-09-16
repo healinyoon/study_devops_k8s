@@ -97,7 +97,7 @@ DEMO_GREETING=Hello from the environment    <-- YAML에 설정한 환경 변수 
 
 ### 개요
 * configMap은 환경 변수를 저장하기도 하지만, 그 외에도 다양한 기능이 있다(예: 스토리지에 파일 저장 등).
-* configMap은 `kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)` 명령어를 통해 1)생성할 수 있고 2)특정 파일로부터 key와 value를 얻는다.
+* configMap은 `kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)` 명령어를 통해 1) 생성할 수 있고 2) 특정 파일로부터 key와 value를 얻는다.
   * file key: 파일명
   * value: 파일 내용
 * 쿠버네티스 리소스 생성시 해당 configMap을 참조하도록 설정해서 환경 변수를 사용한다.
