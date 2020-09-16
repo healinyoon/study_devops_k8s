@@ -1,12 +1,12 @@
 # 연습 문제
 
-* 1번
+* 문제 1번
 
-Namespace blue에 jenkins 이미지를 사용하는 pod-jenkins Deployment를 생성하고 이를 위한 Service srv-jenkins를 생성하라.
+Namespace `blue`에 jenkins 이미지를 사용하는 `pod-jenkins` Deployment를 생성하고 이를 위한 Service `srv-jenkins`를 생성하라.
 
-* 2번
+* 문제 2번
 
-default Namespace의 http-go 이미지의 curl을 사용하여 pod-jenkis을 요청하라.
+`default` Namespace의 http-go 이미지의 curl을 사용하여 `pod-jenkis`을 요청하라.
 예시) `kubectl exec http-go-77cb5c879-29kld -- curl srv-jenkins.blue`
 
 ### 1번
@@ -25,7 +25,9 @@ blue                  Active   3s
 default               Active   5d3h
 ```
 
-* pod-jenkins Deployment 생성
+* pod-jenkins Deployment YAML 작성
+
+**pod-jenkins-deploy.yaml**
 ```
 $ kubectl create deploy --image=jenkins pod-jenkins-deploy --dry-run=client -o yaml
 apiVersion: apps/v1
@@ -56,7 +58,9 @@ status: {}
 $ kubectl create deploy --image=jenkins pod-jenkins-deploy --dry-run=client -o yaml > pod-jenkins-deploy.yaml
 ```
 
-* srv-jenkins Service를 Deployment yaml 파일에 추가
+* srv-jenkins Service를 Deployment YAML에 추가(아래는 추가 전문)
+
+**pod-jenkins-deploy.yaml**
 ```
 apiVersion: v1
 kind: Service
@@ -98,14 +102,14 @@ spec:
 status: {}
 ```
 
-* (blue namespace에 생성되도록) yaml 파일 실행
+* (blue namespace에 생성되도록) YAML 실행
 ```
 $ kubectl create -f pod-jenkins-deploy.yaml -n blue
 service/srv-jenkins created
 deployment.apps/pod-jenkins-deploy created
 ```
 
-* 생성된 자원 확인
+* 생성된 쿠버네티스 리소스 확인
 ```
 $ kubectl get all -n blue
 NAME                                      READY   STATUS    RESTARTS   AGE
@@ -123,7 +127,9 @@ replicaset.apps/pod-jenkins-deploy-6c8f5b65cb   1         1         1       54s
 
 ### 2번
 
-* http-go Deployment&Service yaml 파일 생성
+* http-go Deployment&Service YAML 작성
+
+**http-go-deploy.yaml**
 ```
 apiVersion: v1
 kind: Service
@@ -165,14 +171,14 @@ spec:
 status: {}
 ```
 
-* (default namespace에 생성되도록) yaml 파일 실행
+* (default namespace에 생성되도록) YAML 실행
 ```
 $ kubectl create -f http-go-deploy.yaml
 service/http-go-svc created
 deployment.apps/http-go created
 ```
 
-* 생성된 자원 확인
+* 생성된 쿠버네티스 리소스 확인
 ```
 $ kubectl get all
 NAME                           READY   STATUS    RESTARTS   AGE
@@ -189,7 +195,7 @@ NAME                                 DESIRED   CURRENT   READY   AGE
 replicaset.apps/http-go-5c6f458dc9   1         1         1       11s
 ```
 
-* default Namespace의 http-go 이미지의 curl을 사용하여 pod-jenkis을 요청
+* default Namespace의 http-go 이미지의 curl을 사용하여 pod-jenkis을 요청 확인
 ```
 $ kubectl get pod
 NAME                       READY   STATUS    RESTARTS   AGE
