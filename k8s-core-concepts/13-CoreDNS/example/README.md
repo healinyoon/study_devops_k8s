@@ -6,10 +6,10 @@ Namespace `blue`에 jenkins 이미지를 사용하는 `pod-jenkins` Deployment�
 
 * 문제 2번
 
-`default` Namespace의 http-go 이미지의 curl을 사용하여 `pod-jenkis`을 요청하라.
+`default` Namespace의 http-go 이미지의 curl을 사용하여 `pod-jenkis`을 요청하라.  
 예시) `kubectl exec http-go-77cb5c879-29kld -- curl srv-jenkins.blue`
 
-### 1번
+### 1번 풀이
 
 * blue namespace 생성
 ```
@@ -125,11 +125,11 @@ NAME                                            DESIRED   CURRENT   READY   AGE
 replicaset.apps/pod-jenkins-deploy-6c8f5b65cb   1         1         1       54s
 ```
 
-### 2번
+### 2번 풀이
 
 * http-go Deployment&Service YAML 작성
 
-**http-go-deploy.yaml**
+> http-go-deploy.yaml
 ```
 apiVersion: v1
 kind: Service
