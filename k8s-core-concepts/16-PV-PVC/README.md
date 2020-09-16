@@ -25,7 +25,7 @@
   * spec.accesModes의 array: PV에서 허가한 권한이여야 한다.
   * resources.requests의 value: PV와 일치해야 한다.
 
-*  PVC YAML 작성 요령
+#### PVC YAML 작성 요령
 
 (참고) [kubernetes docs] > "persistent volume" 검색 > [PersistentVolumeClaims] 검색
 
@@ -49,7 +49,7 @@ spec:
 
 * 실제 물리 스토리지 정보가 있어야 한다.
 
-* PV 작성 요령
+#### PV 작성 요령
 
 (참고) [kubernetes docs] > "persistent volume" 검색 > [Persistent Volumes] 검색
 
