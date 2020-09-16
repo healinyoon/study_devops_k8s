@@ -41,7 +41,8 @@ spec:
 
 ### YAML에 PVC 추가
 
-PVC의 `spec.accessModes & resources`와 PV의 `spec.capacity & accessModes` 매칭
+* PVC의 `spec.accessModes`와 PV의 `spec.accessModes` 매칭
+* PVC의 `spec.resources`와 PV의 `spec.capacity` 매칭
 
 > pv-pvc-pod.yaml
 ```
@@ -50,10 +51,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: test-pvc                    
 spec:
-  accessModes:              <-- PVC의 spec.accessModes&resources <=> PV의 spec.capacity&accessModes 
+  accessModes:              <-- PVC의 spec.accessModes <=> PV의 spec.accessModes 
     - ReadWriteOnce             
   volumeMode: Filesystem
-  resources:
+  resources:                <-- PVC의 spec.resources <=> PV의 spec.capacity
     requests:
       storage: 1Gi              
   storageClassName: ""         
