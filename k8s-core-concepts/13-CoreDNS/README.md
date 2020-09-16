@@ -25,11 +25,13 @@ $ kubectl exec -it http-go-5c6f458dc9-wtpdq -- bash
 ```
 root@http-go-5c6f458dc9-wtpdq:/usr/src/app# curl http-go-svc 
 Welcome! http-go-5c6f458dc9-wtpdq
+```
 
 4) DNS를 활용한 Service 검색 2 - svc.cluster.local 생략 가능
 ```
 root@http-go-5c6f458dc9-wtpdq:/usr/src/app# curl http-go-svc.default
 Welcome! http-go-5c6f458dc9-wtpdq
+```
 
 5) DNS를 활용한 Service 검색 3 - default Namespace 생략 가능
 ```
