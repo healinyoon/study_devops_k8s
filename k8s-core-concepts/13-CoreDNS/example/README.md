@@ -27,7 +27,7 @@ default               Active   5d3h
 
 * pod-jenkins Deployment YAML 작성
 
-**pod-jenkins-deploy.yaml**
+> pod-jenkins-deploy.yaml
 ```
 $ kubectl create deploy --image=jenkins pod-jenkins-deploy --dry-run=client -o yaml
 apiVersion: apps/v1
@@ -60,7 +60,7 @@ $ kubectl create deploy --image=jenkins pod-jenkins-deploy --dry-run=client -o y
 
 * srv-jenkins Service를 Deployment YAML에 추가(아래는 추가 전문)
 
-**pod-jenkins-deploy.yaml**
+> pod-jenkins-deploy.yaml
 ```
 apiVersion: v1
 kind: Service
