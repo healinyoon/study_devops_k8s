@@ -143,4 +143,4 @@ replicaset.apps/nginx-d46f5678b   1         1         1       26m   nginx       
 * 외부 접속 확인
 모든 master, Worker IP로 동일한 Pod에 접근 되는 것 확인
 (단 외부 방화벽이 해제되지 않은 10.231.238.45-48 대역 IP로는 외부 접속 불가)
-![](/k8s-core-concepts/images/08-Namespaces-1.png)
+![](/STEP1-core-concepts-of-k8s/images/08-Namespaces-1.png)

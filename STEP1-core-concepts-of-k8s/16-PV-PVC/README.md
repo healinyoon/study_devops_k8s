@@ -14,7 +14,7 @@
 
 * 연동 원리
 
-![](/k8s-core-concepts/images/16-PV-PVC-1.png)
+![](/STEP1-core-concepts-of-k8s/images/16-PV-PVC-1.png)
 
 이미지 출처: 인프런 - devops를 위한 kubernetes 마스터
 

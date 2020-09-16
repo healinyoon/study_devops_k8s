@@ -47,7 +47,7 @@ Welcome! http-go-5c6f458dc9-wtpdq
 * 내부에서 DNS 서버 역할을 하는 Pod가 존재
 * 각 미들웨어를 통해 로깅, 캐싱, Kuberentes를 질의하는 등의 기능을 가짐
 
-![](/k8s-core-concepts/images/13-CoreDNS-1.png)
+![](/STEP1-core-concepts-of-k8s/images/13-CoreDNS-1.png)
 
 이미지 출처: https://weekly-geekly.github.io/articles/331872/index.html
 
@@ -88,6 +88,6 @@ data:
   * FQDN 형식: {hostname}.{subdomain}.{namespace}.svc.cluster-domain.example
   * FQDN 예시: busybox-1.default-subdomain.default.svc.cluster-domain.example
 
-![](/k8s-core-concepts/images/13-CoreDNS-2.png)
+![](/STEP1-core-concepts-of-k8s/images/13-CoreDNS-2.png)
 
 이미지 출처: https://weekly-geekly.github.io/articles/331872/index.html

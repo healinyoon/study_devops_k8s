@@ -60,7 +60,7 @@ spec:
   storageClassName: ""         
 ```
 
-### YAML에 jenkins Pod 추가
+### YAML에 jenkins Pod 추가([참고](https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/#%EB%B3%BC%EB%A5%A8%EC%9C%BC%EB%A1%9C-%ED%81%B4%EB%A0%88%EC%9E%84%ED%95%98%EA%B8%B0))
 
 Pod의 `spec.volumes.name.persistentVolumeClaim.claimName`와 PVC의 `metadata.name` 매칭
 
@@ -85,7 +85,7 @@ spec:
 
 # YAML 실행 및 쿠버네티스 리소스 동작 확인
 
-* 실행
+* YAML 실행
 ```
 $ kubectl create -f pv-pvc-pod.yaml
 pod/jenkins-pod created

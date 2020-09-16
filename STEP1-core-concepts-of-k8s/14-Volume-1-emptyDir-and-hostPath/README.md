@@ -26,11 +26,11 @@
 
 * 사례 1: 공유 스토리지가 없는 동일한 Pod의 3개의 Container
 
-![](/k8s-core-concepts/images/14-Volume-1.png)  
+![](/STEP1-core-concepts-of-k8s/images/14-Volume-1.png)  
 
 * 사례 2: 2개의 볼륨을 공유하는 동일한 Pod의 3개의 Container
 
-![](/k8s-core-concepts/images/14-Volume-2.png)  
+![](/STEP1-core-concepts-of-k8s/images/14-Volume-2.png)  
 이미지 출처: 인프런 - devops를 위한 kubernetes 마스터
 
 ### emptyDir Volume 실습
@@ -54,7 +54,7 @@ done
 emptyDir Volume을 공유하는 2개의 Container를 띄우는 Pod YAML을 작성한다.
 
 (참고) [kubernetes docs] > "volume" 검색 > [emptyDir] 선택해서 참고
-![](/k8s-core-concepts/images/14-Volume-3.png)  
+![](/STEP1-core-concepts-of-k8s/images/14-Volume-3.png)  
 
 > count-httpd.yaml
 ```
@@ -122,7 +122,7 @@ Running loop seq 27
 * Node의 쿠버네티스 리소스를 모니터링용하고 로그를 기록하는데 많이 사용한다.
 * 다른 Node의 Pod끼리 데이터 공유는 불가능하다.
 
-![](/k8s-core-concepts/images/14-Volume-4.png)   
+![](/STEP1-core-concepts-of-k8s/images/14-Volume-4.png)   
 이미지 출처: 인프런 - devops를 위한 kubernetes 마스터
 
 ### GKE 모니터링에 사용되는 hostPath 살펴보기(GKE에서 진행, On-premise는 따로 모니터링 설치 해줘야 함)

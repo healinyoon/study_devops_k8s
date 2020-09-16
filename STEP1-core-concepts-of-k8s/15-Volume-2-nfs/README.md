@@ -67,14 +67,14 @@ test
 
 [kubernetes docs] > "volume" 검색 > [nfs] 선택해서 참고
 
-![](/k8s-core-concepts/images/15-Volume2-nfs-1.png)
+![](/STEP1-core-concepts-of-k8s/images/15-Volume2-nfs-1.png)
 
 * [NFS example](https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs) 사이트 접속
 
 
 * 예제 YAML 확인
 
-![](/k8s-core-concepts/images/15-Volume2-nfs-2.png)
+![](/STEP1-core-concepts-of-k8s/images/15-Volume2-nfs-2.png)
 
 ```
 apiVersion: v1

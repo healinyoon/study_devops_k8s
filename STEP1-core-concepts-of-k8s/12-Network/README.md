@@ -15,7 +15,7 @@
 - `pause` 명령을 실행해 아무 동작을 하지 않는 빈 Container 생성 -> 주 Container에 문제가 생겨서 껐다 켜져도 공유 인터페이스가 유지되게 하기 위해서
 - Port를 겹치게 구성하면 충돌 발생
 
-![](/k8s-core-concepts/images/12-Network-1.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-1.png)
 이미지 출처: 인프런-데브옵스를 위한 쿠버네티스 마스터
 
 - eth0: 물리 인터페이스
@@ -144,20 +144,20 @@ weave: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1376
     - ACI, AOS, AWS VPN CNI, CNI-Genie, GCE, flannel, Weave Net, Calico등
 
 - Weave Net
-![](/k8s-core-concepts/images/12-Network-2.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-2.png)
 이미지 출처: https://www.objectif-libre.com/en/blog/2018/07/05/k8s-network-solutions-comparison/
 
 - CNI 비교
 
-![](/k8s-core-concepts/images/12-Network-3.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-3.png)
 
-![](/k8s-core-concepts/images/12-Network-4.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-4.png)
 
 - Support Matrix
 
-![](/k8s-core-concepts/images/12-Network-5.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-5.png)
 
-![](/k8s-core-concepts/images/12-Network-6.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-6.png)
 
 이미지 출처: https://chrislovecnm.com/kubernetes/cni/choosing-a-cni-provider/
 
@@ -246,20 +246,20 @@ kind: DaemonSet
 
 - iptables는 리눅스 커널 기능인 netfilter를 사용하여 network traffic 제어
 
-![](/k8s-core-concepts/images/12-Network-7.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-7.png)
 이미지 출처: https://kubernetes.io/docs/concepts/services-networking/service/
 
 - kune-proxy라는 컴포넌트로 서비스 트래픽을 제어
 
-![](/k8s-core-concepts/images/12-Network-8.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-8.png)
 이미지 출처: hhttps://ko.wikipedia.org/wiki/Iptables/
 
 ### 서비스 IP를 통해 통신하는 흐름
 
 다음 그림은 서비스 IP를 통해 10.3.241.152에 요청하는 흐름을 나타내고 있다.
 
-![](/k8s-core-concepts/images/12-Network-9.png)
-![](/k8s-core-concepts/images/12-Network-10.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-9.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-10.png)
 
 이미지 출처: https://medium.com/google-cloud/understanding-kubernetes-networking-services-f0cb48e4cc82
 
@@ -292,6 +292,6 @@ ldccai@master:~$ sudo iptables -S -t nat | grep 10.96
 
 - netfilter와 kube-proxy 기능을 사용해 원하는 Service 및 Pod로 연결
 
-![](/k8s-core-concepts/images/12-Network-11.png)
+![](/STEP1-core-concepts-of-k8s/images/12-Network-11.png)
 
 이미지 출처: https://medium.com/google-cloud/understanding-kubernetes-networking-services-f0cb48e4cc82

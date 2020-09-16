@@ -231,7 +231,7 @@ tomcat-np     NodePort       10.4.2.56     <none>          80:30002/TCP   14m
 ### 외부에서 접근 확인
 
 34.64.68.204 접속 확인
-![](/k8s-core-concepts/images/10-Service2-NodePort-LoadBalancer-k8s-loadbalancer-web.png)
+![](/STEP1-core-concepts-of-k8s/images/10-Service2-NodePort-LoadBalancer-k8s-loadbalancer-web.png)
 
 # LoadBalancer 예시 2
 
@@ -282,7 +282,7 @@ kubernetes    ClusterIP      10.4.0.1      <none>          443/TCP        8h
 ### 외부에서 접근 확인
 
 * 34.63.184.155 접속 확인
-![](/k8s-core-concepts/images/10-Service2-NodePort-LoadBalancer-k8s-loadbalancer-web2.png)
+![](/STEP1-core-concepts-of-k8s/images/10-Service2-NodePort-LoadBalancer-k8s-loadbalancer-web2.png)
 
 tomcat 버전 이슈로 404가 뜨는 거니까 당황하지 말고 tomcat 이미지를 변경해주면 된다.
 ```
@@ -294,4 +294,4 @@ image: consol/tomcat-7.0
 ```
 
 * 다시 확인
-![](/k8s-core-concepts/images/10-Service2-NodePort-LoadBalancer-k8s-loadbalancer-web3.png)
+![](/STEP1-core-concepts-of-k8s/images/10-Service2-NodePort-LoadBalancer-k8s-loadbalancer-web3.png)

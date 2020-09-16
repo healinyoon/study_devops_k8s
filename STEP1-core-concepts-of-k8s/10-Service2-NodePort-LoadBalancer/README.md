@@ -15,7 +15,7 @@
 
 # NodePort
 
-![](/k8s-core-concepts/images/10-Service2-NodePort-LoadBalancer-k8s-archi.png)  
+![](/STEP1-core-concepts-of-k8s/images/10-Service2-NodePort-LoadBalancer-k8s-archi.png)  
 
 출처: https://en.wikipedia.org/wiki/Kubernetes
 
