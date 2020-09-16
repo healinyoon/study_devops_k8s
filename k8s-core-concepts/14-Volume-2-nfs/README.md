@@ -1,3 +1,6 @@
+
+이번 페이지에서는 nfs 서버를 설치하고, nfs 서버를 Volume 스토리지로 사용하는 방법을 정리하였다.
+
 # NFS 서버 설치
 
 ### NFS 설치
@@ -42,11 +45,14 @@ Export list for 127.0.0.1:
 ```
 
 * mount test
-```
-# 파일 생성
-# echo 'test' > /home/nfs/test.txt
 
-# 파일 조회
+Volume에 파일을 생성하면
+```
+# echo 'test' > /home/nfs/test.txt
+```
+
+mount 경로에서 확인 가능하다.
+```
 # cat /mnt/test.txt
 test
 ```
@@ -64,7 +70,7 @@ test
 * [NFS example](https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs) 사이트 접속
 
 
-* 예제 코드 확인
+* 예제 YAML 확인
 
 ![](/k8s-core-concepts/images/15-Volume2-nfs-2.png)
 
@@ -83,14 +89,16 @@ spec:
     path: "/"
 ```
 
-=> 아래 nfs 설정 부분 복사해서 yaml 파일 Volume 설정 부분에 붙여넣기
+=> 아래 nfs 설정 부분 복사해서 YAML Volume 설정 부분에 붙여넣을 것임
 ```
   nfs:
     server: nfs-server.default.svc.cluster.local
     path: "/"
 ```
 
-* nfs volume을 연동하는 `nfs-httpd.yaml` yaml 파일 생성
+* nfs volume을 연동하는 YAML 작성
+
+> nfs-httpd.yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -105,13 +113,13 @@ spec:
       name: nfs-volume
       readOnly: true                            <-- 읽기 전용
   volumes:
-  - name: nfs-volume                            <-- containers의 volumeMounts name과 같아야 함
+  - name: nfs-volume                            <-- containers array의 volumeMounts.name value와 같아야 함
     nfs:
       server: 10.1.11.9                         <-- nfs 서버
       path: /home/nfs                           <-- nfs 서버 경로
 ```
 
-* `nfs-httpd.yaml` yaml 파일 실행
+* nfs volume을 연동하는 YAML 실행
 ```
 $ kubectl create -f nfs-httpd.yaml
 pod/nfs-httpd created

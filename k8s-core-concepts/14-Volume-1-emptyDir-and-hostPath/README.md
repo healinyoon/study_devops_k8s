@@ -1,37 +1,43 @@
 # Volume
 
-### 특징
+### 개요
 * Container가 외부 스토리지에 액세스하고 공유하는 방법이다.
 * Pod의 각 Container에는 고유의 분류된 파일 시스템이 존재한다.
-* Volume은 Pod 컴포넌트이며, Pod의 `spec`에 정의(독립적인 Kuberentes object가 아니며 스스로 생성, 삭제 불가)한다.
-* 각 Container의 파일 시스템의 Volume을 마운트하여 생성한다.
+  * Volume은 Pod의 컴포넌트이며, Pod의 `spec` object에 정의(독립적인 Kuberentes 리소스가 아니며 스스로 생성, 삭제 불가)한다.
+  * 각 Container의 파일 시스템의 Volume을 마운트하여 생성한다.
 
 ### Volume의 종류
 
 | 구분 | 목록 | 특징 |
 | --- | --- | --- |
-| 임시 Volume | emptyDir | * 임시 Volume으로 Containerr가 삭제되면 함께 삭제됨<br/>* 데이터 유지가 아닌 Container끼리 데이터를 공유하기 위한 Volume |
+| 임시 Volume | emptyDir | * 임시 Volume으로 Container가 삭제되면 함께 삭제됨<br/>* 데이터 유지가 아닌 Container끼리 데이터를 공유하기 위한 Volume |
 | 로컬(=Node) Volume | hostpath<br/>local | * Pod가 떠있는 Node에서만 보관됨<br/>* 데이터 유지가 아닌 Node 관리를 목적으로 하는 Volume(Node와 데이터를 공유하기 위한 Volume) |
 | 네트워크 Volume | iSCSI<br/>NFS<br/>cephFS<br/>glusterFS... | 외부와 데이터를 공유하기 위한 Volume |
 | 네트워크 Volume<br/>(클라우드 종속적) | gcePersistentDisk<br/>awsEBS<br/>azureFile | |
 
-# emptyDir Volume을 활용한 파일 시스템 공유
+# 1. emptyDir Volume을 활용한 파일 시스템 공유
 
-### 사례 1: 공유 스토리지가 없는 동일한 Pod의 3개의 Container
+### 사례 비교를 통해 emptyDir 필요성 알아보기
+
+아래의 두 사례는 Pod가 죽으면 Container 데이터가 모두 사라지는 것은 동일하지만,   
+사례 1은 Container간 데이터 공유가 불가능하고, 사례 2는 Container간 공유가 가능하다.
+
+* 사례 1: 공유 스토리지가 없는 동일한 Pod의 3개의 Container
 
 ![](/k8s-core-concepts/images/14-Volume-1.png)  
-이미지 출처: 인프런 - devops를 위한 kubernetes 마스터
 
-### 사례 2: 2개의 볼륨을 공유하는 3개의 Container
+* 사례 2: 2개의 볼륨을 공유하는 동일한 Pod의 3개의 Container
 
 ![](/k8s-core-concepts/images/14-Volume-2.png)  
 이미지 출처: 인프런 - devops를 위한 kubernetes 마스터
 
-# emptyDir Volume 실습
+### emptyDir Volume 실습
 
-### Volume을 공유하는 애플리케이션 생성(실습용 애플리케이션)
+* Volume을 공유하는 애플리케이션 원리 이해
 
-* 애플리케이션 코드 일부
+실습용 애플리케이션으로 **Volume 경로에 10초에 한 번씩 데이터를 생성하여 웹서비스와 공유할 수 있는지 테스트하기 위해 사용**된다. 동작 원리를 위해 추가하였으며, 도커 허브의 `gasbugs/count` 이미지에 포함된 내부 애플리케이션이므로 **실습 때는 이미지를 가져다 사용하면 된다.**
+
+> 애플리케이션 코드 일부
 ```
 for i in $SET
 
@@ -41,15 +47,14 @@ do
 done
 ```
 
-10초에 한 번씩 데이터를 생성하여 웹서비스와 공유할 수 있는지 테스트
+* emptyDir Volume 사용
 
-### emptyDir Volume 사용
+emptyDir Volume을 공유하는 2개의 Container를 띄우는 Pod YAML을 작성한다.
 
-* emptyDir Volume을 공유하는 2개의 Container를 띄우는 Pod yaml 생성
-
-[kubernetes docs] > "volume" 검색 > [emptyDir] 선택해서 참고
+(참고) [kubernetes docs] > "volume" 검색 > [emptyDir] 선택해서 참고
 ![](/k8s-core-concepts/images/14-Volume-3.png)  
 
+> count-httpd.yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -75,7 +80,7 @@ spec:
     emptyDir: {}
 ```
 
-* emptyDir Volume을 공유하는 2개의 Container를 띄우는 Pod yaml 실행
+* emptyDir Volume을 공유하는 2개의 Container를 띄우는 Pod YAML 실행
 
 ```
 $ kubectl create -f count-httpd.yaml
@@ -106,19 +111,19 @@ $ kubectl exec -it http-go-5c6f458dc9-m97w8 -- curl 10.40.0.2
 Running loop seq 27
 ```
 
-# hostPath Volume을 활용한 파일 시스템 공유
+# 2. hostPath Volume을 활용한 파일 시스템 공유
 
-### 특징
+### 개요
 
-* Node의 파일 시스템에 있는 특정 파일 또는 디렉토리 지정
+* Node의 파일 시스템에 있는 특정 파일 또는 디렉토리 지정하여 마운트한다.
 * Pod가 내려가도 남아있는 영구 스토리지
-* 다른 Node의 Pod끼리 데이터 공유는 불가능함
-* Node의 모니터링용으로 많이 사용
+* Node의 쿠버네티스 리소스를 모니터링용하고 로그를 기록하는데 많이 사용한다.
+* 다른 Node의 Pod끼리 데이터 공유는 불가능하다.
 
 ![](/k8s-core-concepts/images/14-Volume-4.png)   
 이미지 출처: 인프런 - devops를 위한 kubernetes 마스터
 
-### hostPath 사용 현황 파악하기(GKE에서 진행, On-premise는 따로 모니터링 설치 해줘야 함)
+### GKE 모니터링에 사용되는 hostPath 살펴보기(GKE에서 진행, On-premise는 따로 모니터링 설치 해줘야 함)
 
 * Monitoring Pod가 떠있음
 ```
@@ -147,32 +152,31 @@ Volumes:
 (중략)
 ```
 
-이런 것을을 수집하고 모니터링 하기 위해서 hostPath Volume을 사용!
+이런 식으로 노드의 쿠버네티스 리소스 모니터링 및 로그 정보를 수집하기 위해서 hostPath Volume을 사용!
 
-# hostPath Volume 실습
+### hostPath Volume 실습
 
-###  Worker Node에 hostPath Volume을 생성
+* Worker Node 파일 시스템에 hostPath Volume을 생성
 
-* Worker Node1
+Worker Node1에서 아래 명령어 수행
 ```
 # sudo mkdir /var/htdocs
 # sudo echo "work1" > /var/htdocs/index.html
 # cat /var/htdocs/index.html
 ```
 
-* Worker Node2
+Worker Node1에서 아래 명령어 수행한다.
 ```
 # sudo mkdir /var/htdocs
 # sudo echo "work2" > /var/htdocs/index.html
 # cat /var/htdocs/index.html
 ```
 
-### hostPath Volume을 공유하는 Pod 생성
+* hostPath Volume을 공유하는 Pod YAML 작성
 
-* hostPath Volume을 공유하는 Pod yaml 파일 생성
+(참고) [kubernetes docs] > "volume" 검색 > [hostPath] 선택해서 참고
 
-[kubernetes docs] > "volume" 검색 > [hostPath] 선택해서 참고
-
+> hostpath-http.yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -195,7 +199,7 @@ spec:
       type: Directory
 ```
 
-* `hostpath-http.yaml` 실행
+* hostPath Volume을 공유하는 Pod YAML 실행
 
 ```
 $ kubectl create -f hostpath-http.yaml
@@ -209,17 +213,14 @@ NAME                       READY   STATUS    RESTARTS   AGE
 hostpath-http              1/1     Running   0          71s
 ```
 
-### 외부 접속 확인
-
-* `port-forward` 명령 실행
-port-forward 실행
+* Volume 마운트가 잘 됐는지 테스트하기 위해, 외부 접속 가능하게 `port-forward` 명령 실행
 ```
 $ kubectl port-forward hostpath-http 8888:80
 Forwarding from 127.0.0.1:8888 -> 80
 Forwarding from [::1]:8888 -> 80
 ```
 
-* Pod의 웹서비스에 접속해서 Pod가 Node의 데이터를 읽어오는 것을 확인하여 어느 Node에서 실행했는지 알 수 있음
+* Pod의 웹서비스에 접속해서 **Pod가 Node의 hostPath Volume 데이터를 읽어오는 것**을 확인하여 어느 Node에서 실행했는지 알 수 있음
 ```
 $ curl -i 127.0.0.1:8888
 HTTP/1.1 200 OK
