@@ -1,22 +1,25 @@
-# 실습
+# PV, PVC 실습
 
-### 생성해야하는 것 3가지
+### PV, PVC 실습을 위해 생성해야하는 것 3가지
 
 1) PV
 2) PVC
 3) Pod
 
 
-# `pv-pvc-pod.yaml` yaml 파일 생성
+# PV, PVC, Pod 생성을 위한 YAML 작성
 
-### 파일 생성
+### YAML 생성
 
 ```
 $ touch pv-pvc-pod.yaml
 ```
 
-### `pv-pvc-pod.yaml` yaml 파일에 PV 추가
+### YAML에 PV 추가
 
+PV의 `spec.nfs`와 스토리지 매칭
+
+> pv-pvc-pod.yaml
 ```
 apiVersion: v1
 kind: PersistentVolume
@@ -31,20 +34,23 @@ spec:
     - ReadOnlyMany      
   persistentVolumeReclaimPolicy: Retain  
   storageClassName: ""
-  nfs:
+  nfs:                      <-- PV의 spec.nfs <=> 스토리지
     server: 10.1.11.9
     path: /home/nfs
 ```
 
-### `pv-pvc-pod.yaml` yaml 파일에 PVC 추가
+### YAML에 PVC 추가
 
+PVC의 `spec.accessModes & resources`와 PV의 `spec.capacity & accessModes` 매칭
+
+> pv-pvc-pod.yaml
 ```
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: test-pvc                
+  name: test-pvc                    
 spec:
-  accessModes:
+  accessModes:              <-- PVC의 spec.accessModes&resources <=> PV의 spec.capacity&accessModes 
     - ReadWriteOnce             
   volumeMode: Filesystem
   resources:
@@ -53,8 +59,11 @@ spec:
   storageClassName: ""         
 ```
 
-### `pv-pvc-pod.yaml` yaml 파일에 Pod 추가
+### YAML에 jenkins Pod 추가
 
+Pod의 `spec.volumes.name.persistentVolumeClaim.claimName`와 PVC의 `metadata.name` 매칭
+
+> pv-pvc-pod.yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -70,10 +79,10 @@ spec:
   volumes:
     - name: jenkins
       persistentVolumeClaim:
-        claimName: test-pvc
+        claimName: test-pvc             <-- Pod의 spec.volumes.name.persistentVolumeClaim.claimName <=> PVC의 metadata.name
 ```
 
-# `pv-pvc-pod.yaml` yaml 파일 실행
+# YAML 실행 및 쿠버네티스 리소스 동작 확인
 
 * 실행
 ```
