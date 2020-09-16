@@ -1,14 +1,16 @@
 # PV(PersistentVolume)/PVC(PersistentVolumeClaim)
 
+[※ 쿠버네티스 pv 공식 문서](https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/)
+
+### PV와 PVC 개요
+
 * Pod 개발자 입장에서 스토리지 추상화
   * Pod 개발자가 클러스터에서 스토리지를 사용할 때 인프라 정보를 알아야 할까?
   * 애플리케이션을 배포하는 개발자가 스토리지 기술의 종류를 몰라도 상관없이 사용할 수 있도록 하는 것이 DevOps에 이상적!
 * 인프라 관련 처리는 클러스터 관리자의 영역!
   * PV와 PVC를 사용해서 관리자와 개발자의 영역 분리
 
-### PV와 PVC 정의
-
-개발자가 인프라 세부 정보(스토리지의 세부 정보 or 물리 디스크의 경로)를 알지 못해도 클러스터의 스토리지를 사용할 수 있도록 도와주는 리소스이다.
+=> 즉 개발자가 인프라 세부 정보(스토리지의 세부 정보 or 물리 디스크의 경로)를 알지 못해도 클러스터의 스토리지를 사용할 수 있도록 도와주는 리소스이다.
 
 * 연동 원리
 
@@ -16,10 +18,18 @@
 
 이미지 출처: 인프런 - devops를 위한 kubernetes 마스터
 
-### PVC 작성 요령
+### PVC
 
-[kubernetes docs] > "persistent volume" 검색 > [PersistentVolumeClaims] 검색
+* 스토리지 정보를 몰라도 PV와 연결하기 위한 정보만 있으면 된다.
+* 아래 정보를 기반으로 매칭되는 PV와 연결된다.
+  * spec.accesModes의 array: PV에서 허가한 권한이여야 한다.
+  * resources.requests의 value: PV와 일치해야 한다.
 
+*  PVC YAML 작성 요령
+
+(참고) [kubernetes docs] > "persistent volume" 검색 > [PersistentVolumeClaims] 검색
+
+아래와 같이 PVC YAML 형식 복사
 ```
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -35,10 +45,15 @@ spec:
   storageClassName: ""          # 동적 프로비저닝에서 사용
 ```
 
-### PV 작성 요령
+### PV
 
-[kubernetes docs] > "persistent volume" 검색 > [Persistent Volumes] 검색
+* 실제 물리 스토리지 정보가 있어야 한다.
 
+* PV 작성 요령
+
+(참고) [kubernetes docs] > "persistent volume" 검색 > [Persistent Volumes] 검색
+
+아래와 같이 PV YAML 형식 복사
 ```
 apiVersion: v1
 kind: PersistentVolume

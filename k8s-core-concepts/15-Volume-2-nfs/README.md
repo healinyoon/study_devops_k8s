@@ -59,7 +59,7 @@ test
 
 # NFS Volume 연결
 
-[※ 쿠버네티스 coreDNS 공식 문서](https://kubernetes.io/docs/concepts/storage/volumes/)
+[※ 쿠버네티스 Volume 공식 문서](https://kubernetes.io/docs/concepts/storage/volumes/)
 
 ### NFS Volume mount Pod 실행
 

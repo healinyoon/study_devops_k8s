@@ -1,6 +1,6 @@
 # Volume
 
-[※ 쿠버네티스 coreDNS 공식 문서](https://kubernetes.io/docs/concepts/storage/volumes/)
+[※ 쿠버네티스 Volume 공식 문서](https://kubernetes.io/docs/concepts/storage/volumes/)
 
 ### 개요
 * Container가 외부 스토리지에 액세스하고 공유하는 방법이다.
