@@ -1,9 +1,11 @@
-# DNS 서비스를 이용한 Service 검색
+# Service Discovery 위한 CoreDNS 사용하기
 
-### 정의
+[쿠버네티스 공식 문서](https://kubernetes.io/ko/docs/tasks/administer-cluster/coredns/)
+
+### 정의 및 사용 방법
 
 * 서비스를 생성하면 대응하는 DNS entry가 생성
-* 형식: {Service 명}.{Namespace 명}.svc.cluster.local
+* 형식: `{Service 명}.{Namespace 명}.svc.cluster.local`
 * 예시
 ```
 // Pod 조회
@@ -14,21 +16,21 @@ pod/http-go-5c6f458dc9-wtpdq              1/1     Running   0          7m31s
 // Pod 내부 접속
 $ kubectl exec -it http-go-5c6f458dc9-wtpdq -- bash
 
-// DNS를 활용한 Service 검색
+// DNS를 활용한 Service 검색 1
 root@http-go-5c6f458dc9-wtpdq:/usr/src/app# curl http-go-svc 
 Welcome! http-go-5c6f458dc9-wtpdq
 
-// svc.cluster.local 생략 가능
+// DNS를 활용한 Service 검색 2 - svc.cluster.local 생략 가능
 root@http-go-5c6f458dc9-wtpdq:/usr/src/app# curl http-go-svc.default
 Welcome! http-go-5c6f458dc9-wtpdq
 
-// default Namespace 생략 가능
+// DNS를 활용한 Service 검색 3 - default Namespace 생략 가능
 root@http-go-5c6f458dc9-wtpdq:/usr/src/app# curl http-go-svc
 Welcome! http-go-5c6f458dc9-wtpdq
 root@http-go-5c6f458dc9-wtpdq:/usr/src/app#
 ```
 
-### CoreDNS
+### CoreDNS 기능
 
 * 내부에서 DNS 서버 역할을 하는 Pod가 존재
 * 각 미들웨어를 통해 로깅, 캐싱, Kuberentes를 질의하는 등의 기능을 가짐
@@ -86,7 +88,7 @@ metadata:
 
 ### Pod에서도 Subdomain을 사용하면 DNS 서비스 사용 가능
 
-* yaml 파일의 hostname은 Pod의 metadata.name을 따름(필요한 경우 hostname을 따로 선택 가능)
+* yaml 파일의 hostname은 Pod의 `metadata.name`을 따름(필요한 경우 hostname을 따로 선택 가능)
 * Subdomain은 서브 도메인을 지정하는데 사용 -> 서브 도메인을 지정하면 FQDN 사용 가능
   * FQDN 형식: {hostname}.{subdomain}.{namespace}.svc.cluster-domain.example
   * FQDN 예시: busybox-1.default-subdomain.default.svc.cluster-domain.example
