@@ -5,7 +5,10 @@
 # CoreDNS 정의 및 사용 방법
 
 * 서비스를 생성하면 대응하는 DNS entry가 생성
-* 형식: `{Service 명}.{Namespace 명}.svc.cluster.local`
+
+### 형식
+
+`{Service 명}.{Namespace 명}.svc.cluster.local`
 
 ### 예시
 
