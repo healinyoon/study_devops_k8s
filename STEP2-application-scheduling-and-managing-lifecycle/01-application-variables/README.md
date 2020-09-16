@@ -100,8 +100,10 @@ DEMO_GREETING=Hello from the environment    <-- YAML에 설정한 환경 변수 
 * configMap은 `kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)` 명령어를 통해 1) 생성할 수 있고 2) 특정 파일로부터 file key와 value를 얻는다.
   * file key: 파일명
   * value: 파일 내용
-* 쿠버네티스 리소스 생성시 해당 configMap을 참조하도록 설정해서 환경 변수를 사용한다.
-  * 쿠버네티스 리소스의 `spec.containers.env`의 `configMapKeyRef.name`과 configMap의 `metadata.name`을 매칭시키면 참조 가능하다.
+* 쿠버네티스 리소스 생성시 해당 configMap을 참조하도록 설정해서 사용한다.
+  * 쿠버네티스 리소스의 `spec.containers.env`의 `configMapKeyRef.name`과 configMap의 `metadata.name`을 매칭시킨다.
+  * 쿠버네티스 리소스의 `spec.containers.env`의 `configMapKeyRef.key`와 `file key(파일 명)`을 매칭시킨다.
+  * 쿠버네티스 리소스의 `env.name`이 환경 변수 명, file에 저장된 값이 환경 변수 값이 된다.
 
 ### 사용 방법
 
@@ -141,11 +143,11 @@ spec:
   - name: envar-demo-container
     image: gcr.io/google-samples/node-hello:1.0
     env:
-    - name: DEMO_GREETING
+    - name: DEMO_GREETING               <-- 환경 변수 명
       valueFrom:
-        configMapKeyRef:
-          name: test-configmap          <-- configmap의 metadata.name 매칭
-          key: data
+        configMapKeyRef:                <-- 아래를 통해 참조한 configmap을 통해 환경 변수 값을 얻는다.
+          name: test-configmap          <-- configmap의 metadata.name과 매칭
+          key: data                     <-- configmap의 file key(파일 명)과 매칭
 ```
 
 * YAML 실행
