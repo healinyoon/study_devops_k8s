@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: ns-limitrange
+  labels:
+    run: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+       run: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+status: {}
