@@ -13,9 +13,9 @@ $ kubectl get pod nginx-7b47bbb85b-4vdrm -o yaml
 
 # limitRanges
 
-[※ 쿠버네티스 LimitRange 공식 문서]("https://kubernetes.io/docs/concepts/policy/limit-range/")
+[※ 쿠버네티스 LimitRange 공식 문서](https://kubernetes.io/docs/concepts/policy/limit-range/)
 
-Namespace에서 Pod 또는 Container 별로 리소스를 제한하는 정책이다.
+Namespace에서 Pod 또는 Container 별로 리소스를 제한하는 정책이다.  
 Apiserver 옵션에 `--enable-admission-plugins=LimitRange`를 설정하여 사용한다.
 
 ### limitRange의 기능
@@ -35,7 +35,7 @@ Apiserver 옵션에 `--enable-admission-plugins=LimitRange`를 설정하여 사�
 
 ### api-server에 설정 추가
 
-`--enable-admission-plugins=LimitRange`를 설정
+`--enable-admission-plugins=LimitRange` 설정
 
 ```
 $ sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
@@ -47,13 +47,13 @@ $ sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
 - --enable-admission-plugins=NodeRestriction,LimitRanger
 ```
 
-### 실습할 Namespace 생성
+### (실습 환경) Namespace 생성
 ```
 $ kubectl create ns limitrage
 namespace/limitrage created
 ```
 
-### 사용 방법 1 - Container 수준의 리소스 제한
+### 1. Container 수준의 리소스 제한
 
 제한하기 원하는 Namespace에 LimitRange 리소스를 생성한다. 
 
@@ -245,7 +245,7 @@ NAME    READY   UP-TO-DATE   AVAILABLE   AGE
 nginx   0/3     0            0           85s
 ```
 
-describe event를 확인해보면 다음과 같음
+Deployment 상세 조회로 `Events`를 확인해보면 다음과 같음
 ```
 $ kubectl describe deploy -n ns-limitrange
 
@@ -258,7 +258,7 @@ Events:
 
 위의 로그에서 replica 중에 중단된 것을 볼 수 있다 => 이번에는 replicaSet을 조회해서 살펴보자
 
-* Replica 조회
+* Replica 상세 조회
 ```
 $ kubectl describe rs -n ns-limitrange
 
@@ -272,7 +272,7 @@ Events:
 위와 같이 maximum cpu를 초과해서 replicaSet 생성이 불가능하다는 로그를 볼 수 있다!
 
 
-### 사용 방법 2 - Pod 수준의 리소스 제한
+### 2. Pod 수준의 리소스 제한
 
 제한하기 원하는 Namespace에 limitRange 리소스를 생성한다.
 
@@ -280,6 +280,7 @@ Events:
 > limit-mem-cpu-per-pod.yaml
 
 * 제한 설명
+
 | 기준 | CPU | MEM |
 | --- | --- | --- |
 | 최대 | 2 | 2Gi |
@@ -291,7 +292,7 @@ Events:
 ```
 ```
 
-### 사용 방법 3 - 스토리스 리소스 제한
+### 3. 스토리스 리소스 제한
 
 제한하기 원하는 Namespace에 LimitRange 리소스를 생성한다.
 
