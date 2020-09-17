@@ -336,6 +336,7 @@ spec:
 ```
 
 * 예시 해석
+
 Namespace 내의 모든 Container의 리소스 합이 다음을 넘어서는 안된다.
 
 | 기준 | CPU | MEM |
@@ -396,6 +397,8 @@ Error from server (Forbidden): error when creating "https://k8s.io/examples/admi
 
 위와 같은 에러 발생을 확인할 수 있다.
 
-상세 에러를 확인하면, `quests.memory=700Mi, used: requests.memory=600Mi, limited: requests.memory=1Gi` Resource Quota의 설정을 초과하여 Pod 생성이 실패했음을 알 수 있다.
+에러 내용을 살펴보면,  
+`quests.memory=700Mi, used: requests.memory=600Mi, limited: requests.memory=1Gi`  
+Resource Quota의 설정을 초과하여 Pod 생성이 실패했음을 알 수 있다.
 
 
