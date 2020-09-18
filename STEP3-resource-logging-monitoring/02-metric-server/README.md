@@ -23,8 +23,7 @@ Container CPU 및 Memory 사용량과 같은 리소스 사용량 메트릭은 �
 
 memory는 메트릭이 수집된 순간의 working set 사용량을 측정한다. 여기서 working set이란 'memory pressure'에서 풀려날 수 없는 'in-use' 상태를 의미한다. 
 
-> 참고
-그러나 working set 특정은 호스트 OS에 따라 다르며, 일반적으로 heuristics를 사용해서 평가한다. Kubernetes는 swap을 지원하지 않기 때문에 모든 익명(non-file-backed) 메모리를 포함한다. 호스트 OS가 항상 이런 페이지를 회수할 수 없기 때문에 메트릭에는 일반적으로 일부 캐시된(file-backed) 메모리도 포함된다. 
+> (참고) Working set 특정은 호스트 OS에 따라 다르며, 일반적으로 heuristics를 사용해서 평가한다. Kubernetes는 swap을 지원하지 않기 때문에 모든 익명(non-file-backed) 메모리를 포함한다. 호스트 OS가 항상 이런 페이지를 회수할 수 없기 때문에 메트릭에는 일반적으로 일부 캐시된(file-backed) 메모리도 포함된다. 
 
 # Metric Server 설치 방법
 
