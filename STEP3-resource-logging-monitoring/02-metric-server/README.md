@@ -94,7 +94,7 @@ spec.containers.args Array에 아래 두 개의 옵션 추가
 (중략)
 ```
 
-### metric-servert 사용
+### metric-server 사용
 정보 수집을 위한 시간이 필요하므로 1분 정도 지난 후 Pod와 Node의 리소스 조회를 요청하면 정상적으로 모니터링 할 수 있다. 
 
 * Node 조회
