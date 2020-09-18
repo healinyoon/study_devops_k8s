@@ -78,7 +78,7 @@ systemd─┬─accounts-daemon───2*[{accounts-daemon}]
 (중략)
 ```
 
-=> 그래서 결론은 log가 docker에 쌓인다는 말이다.
+=> 그래서 결론은 log가 docker의 경로에 쌓인다는 말이다.
 
 # Docker log 쌓여있는 것 살펴보기
 
@@ -106,6 +106,7 @@ lrwxrwxrwx  1 root root     94 Sep  8 07:46 weave-net-q6vj7_kube-system_weave-np
 
 #### Log 내용 보기
 ```
+$ cat weave-net-q6vj7_kube-system_weave-8afa0246e6cfdbae1c19f19a1331083c19794c767a6401f55ecad0a302fcadc0.log
 {"log":"INFO: 2020/09/08 07:46:28.658904 Command line options: map[conn-limit:200 datapath:datapath db-prefix:/weavedb/weave-net docker-api: expect-npc:true host-root:/host http-addr:127.0.0.1:6784 ipalloc-init:consensus=2 ipalloc-range:10.32.0.0/12 metrics-addr:0.0.0.0:6782 name:de:60:e9:1e:f8:94 nickname:master no-dns:true no-masq-local:true port:6783]\n","stream":"stderr","time":"2020-09-08T07:46:28.659121082Z"}
 {"log":"INFO: 2020/09/08 07:46:28.659062 weave  2.7.0\n","stream":"stderr","time":"2020-09-08T07:46:28.659187782Z"}
 {"log":"INFO: 2020/09/08 07:46:29.029848 Bridge type is bridged_fastdp\n","stream":"stderr","time":"2020-09-08T07:46:29.06276161Z"}
@@ -131,8 +132,9 @@ lrwxrwxrwx  1 root root     94 Sep  8 07:46 weave-net-q6vj7_kube-system_weave-np
 (중략)
 ```
 
-#### Log의 제목도 정보를 담고 있음
+#### Log의 제목에 담긴 의미!
 
+* 제목
 ```
 weave-net-q6vj7_kube-system_weave-npc-07970c3cdb162d428ba13f7be372847284b8e567f16b3eaeb05e59a4fc62d0bc.log -> /var/log/pods/kube-system_weave-net-q6vj7_fddb8017-e841-46dc-9642-7b20a99f7078/weave-npc/0.log
 ```
