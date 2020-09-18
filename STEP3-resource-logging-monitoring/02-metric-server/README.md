@@ -29,7 +29,9 @@ memory는 메트릭이 수집된 순간의 working set 사용량을 측정한다
 
 [※ Metric Server 설치 참고 문서](https://blog.naver.com/isc0304/221860790762)
 
-# metric-server 설치
+### metric-server 설치
+
+* metric-server repository 다운로드
 
 ```
 $ git clone https://github.com/kubernetes-sigs/metrics-server
@@ -41,6 +43,8 @@ remote: Total 12248 (delta 13), reused 23 (delta 3), pack-reused 12199
 Receiving objects: 100% (12248/12248), 12.47 MiB | 6.87 MiB/s, done.
 Resolving deltas: 100% (6389/6389), done.
 ```
+
+* metric-server YAML 실행
 
 README.md를 읽어보면 다음과 같이 설치 방법을 안내하고 있다.
 ```
@@ -57,3 +61,76 @@ clusterrole.rbac.authorization.k8s.io/system:metrics-server created
 clusterrolebinding.rbac.authorization.k8s.io/system:metrics-server created
 ```
 
+* metric-server 테스트
+```
+$ kubectl top nodes
+error: metrics not available yet
+```
+
+여기까지 실행하면 metric-server는 동작하지만 kubelet에 접근해서 Pod와 Node의 정보를 얻어오지는 못한다.  
+
+* metric-server 내용 수정
+이는 TLS 통신이 제대로 이루어지지 않기 때문이므로, 다음과 같이 metric-server의 내용을 수정하여 서버 통신이 되도록한다.
+
+```
+$ kubectl edit deployments.apps -n kube-system metrics-server
+
+spec.containers.args Array에 아래 두 개의 옵션 추가
+
+- --kubelet-insecure-tls: 인증서가 공인 기관에 승인을 받지 않은 인증서이지만 무시한다.
+- --kubelet-preferred-address-types=InternalIP: kebelet 연결에 사용할 주소 타입 지정
+```
+
+변경된 내용
+```
+(중략)
+    spec:
+      containers:
+      - args:
+        - --cert-dir=/tmp
+        - --secure-port=4443
+        - --kubelet-insecure-tls
+        - --kubelet-preferred-address-types=InternalIP
+(중략)
+```
+
+### metric-servert 사용
+정보 수집을 위한 시간이 필요하므로 1분 정도 지난 후 Pod와 Node의 리소스 조회를 요청하면 정상적으로 모니터링 할 수 있다. 
+
+* Node 조회
+```
+$ kubectl top nodes
+NAME      CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
+master    337m         16%    4484Mi          57%
+worker1   77m          3%     1458Mi          18%
+worker2   57m          2%     2399Mi          30%
+```
+
+
+* default Namespace의 Pod 조회
+```
+$ kubectl top pod
+NAME                       CPU(cores)   MEMORY(bytes)
+configmap-envar-demo       0m           11Mi
+envar-demo                 0m           11Mi
+http-go-5c6f458dc9-m97w8   0m           2Mi
+```
+
+* kube-system Namespace의 Pod 조회
+```
+$ kubectl top pod -n kube-system
+NAME                              CPU(cores)   MEMORY(bytes)
+coredns-f9fd979d6-79vc6           3m           14Mi
+coredns-f9fd979d6-gfbpg           4m           14Mi
+etcd-master                       16m          64Mi
+kube-apiserver-master             40m          293Mi
+kube-controller-manager-master    12m          51Mi
+kube-proxy-49zfz                  1m           21Mi
+kube-proxy-587jv                  1m           18Mi
+kube-proxy-8p6v6                  1m           17Mi
+kube-scheduler-master             4m           19Mi
+metrics-server-75f98fdbd5-mfb2k   1m           14Mi
+weave-net-p964j                   1m           67Mi
+weave-net-q6vj7                   1m           69Mi
+weave-net-v5qqm                   2m           65Mi
+```
