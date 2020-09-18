@@ -31,7 +31,7 @@ memory는 메트릭이 수집된 순간의 working set 사용량을 측정한다
 
 ### metric-server 설치
 
-* metric-server repository 다운로드
+#### metric-server repository 다운로드
 
 ```
 $ git clone https://github.com/kubernetes-sigs/metrics-server
@@ -44,7 +44,7 @@ Receiving objects: 100% (12248/12248), 12.47 MiB | 6.87 MiB/s, done.
 Resolving deltas: 100% (6389/6389), done.
 ```
 
-* metric-server YAML 실행
+#### metric-server YAML 실행
 
 README.md를 읽어보면 다음과 같이 설치 방법을 안내하고 있다.
 ```
@@ -61,7 +61,7 @@ clusterrole.rbac.authorization.k8s.io/system:metrics-server created
 clusterrolebinding.rbac.authorization.k8s.io/system:metrics-server created
 ```
 
-* metric-server 테스트
+#### metric-server 테스트
 ```
 $ kubectl top nodes
 error: metrics not available yet
@@ -69,7 +69,7 @@ error: metrics not available yet
 
 여기까지 실행하면 metric-server는 동작하지만 kubelet에 접근해서 Pod와 Node의 정보를 얻어오지는 못한다.  
 
-* metric-server 내용 수정
+#### metric-server 내용 수정
 이는 TLS 통신이 제대로 이루어지지 않기 때문이므로, 다음과 같이 metric-server의 내용을 수정하여 서버 통신이 되도록한다.
 
 ```
@@ -105,7 +105,6 @@ master    337m         16%    4484Mi          57%
 worker1   77m          3%     1458Mi          18%
 worker2   57m          2%     2399Mi          30%
 ```
-
 
 * default Namespace의 Pod 조회
 ```
