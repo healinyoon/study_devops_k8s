@@ -19,7 +19,7 @@
 * `/metrics/resource/v1beta1` API 사용
 
 ### 2. 완전한 metric pipeline
-* 보다 풀부한 metric에 접근
+* 보다 풍부한 metric에 접근
 * PV 등을 통해 메모리를 관리
 * Cluster의 현재 상채를 기반으로 자동으로 스케일링하거나 Cluster를 조정
 * CNCF 프로젝트인 "Prometheus"가 대표적
