@@ -27,7 +27,7 @@ memory는 메트릭이 수집된 순간의 working set 사용량을 측정한다
 
 # Metric Server 설치 방법
 
-[※ 참고 문서](https://blog.naver.com/isc0304/221860790762)
+[※ Metric Server 설치 참고 문서](https://blog.naver.com/isc0304/221860790762)
 
 # metric-server 설치
 
