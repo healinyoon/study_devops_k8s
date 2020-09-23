@@ -42,7 +42,7 @@ etcd-v3.4.10-linux-amd64
 
 ### Etcd 조회
 ```
-$ ./etcd-v3.4.10-linux-amd64
+$ cd ./etcd-v3.4.10-linux-amd64
 $ sudo ETCDCTL_API=3 ./etcdctl --endpoints  127.0.0.1:2379 --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key get / --prefix --keys-only
 /registry/apiregistration.k8s.io/apiservices/v1.
 /registry/apiregistration.k8s.io/apiservices/v1.admissionregistration.k8s.io
