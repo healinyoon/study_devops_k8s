@@ -3,8 +3,9 @@
 Kuberentes Cluster는 쿠버네티스의 여러 리소스를 관리하기 위한 집합체를 말한다.  
 쿠버네티스 클러스터는 다음과 같이 Master와 Worker node로 구성된다.
 
-
 쿠버네티스 마스터 서버에 배포되는 관리 컴포넌트는 다음과 같은 것이 있다.
+
+![](/STEP1-core-concepts-of-k8s/images/00-cluster-1.png)
 
 | Component 명 | 역할 |
 | --- | --- |
