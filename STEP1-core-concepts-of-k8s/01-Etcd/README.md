@@ -23,17 +23,17 @@ value 접근 방법 예시: User[1]['Name']
 
 ### 설치(Master Node)
 
-* 1) Google에 'Etcd github' 검색
+#### 1) Google에 'Etcd github' 검색
 ![](/STEP1-core-concepts-of-k8s/images/01-Etcd-3.png)  
 
-* 2) tar 파일 다운로드
+#### 2) tar 파일 다운로드
 ![](/STEP1-core-concepts-of-k8s/images/01-Etcd-4.png)  
 
 ```
 $ wget https://github.com/etcd-io/etcd/releases/download/v3.4.10/etcd-v3.4.10-linux-amd64.tar.gz
 ```
 
-* 3) 압축 해제
+#### 3) 압축 해제
 ```
 $ tar -xf etcd-v3.4.10-linux-amd64.tar.gz
 $ ls
