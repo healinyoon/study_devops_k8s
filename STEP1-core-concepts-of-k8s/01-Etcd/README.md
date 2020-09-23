@@ -9,14 +9,14 @@
 ETCD는 고가용성을 제공하는 분산형 key-value 저장소 오픈소스이며, Kubernetes에서 필요한 모든 데이터를 저장하는 실질적인 데이터베이스이다.   
 
 * Key-Value Data Set
-![](/STEP1-core-concepts-of-k8s/images/01-Etcd-1.png)
+![](/STEP1-core-concepts-of-k8s/images/01-Etcd-1.png)  
 이미지 출처: 인프런-데브옵스를 위한 쿠버네티스 마스터
 
 * Multi Key-Value Data Set
 
 value 접근 방법 예시: User[1]['Name']
 
-![](/STEP1-core-concepts-of-k8s/images/01-Etcd-2.png)
+![](/STEP1-core-concepts-of-k8s/images/01-Etcd-2.png)  
 이미지 출처: 인프런-데브옵스를 위한 쿠버네티스 마스터
 
 # Etcd 설치 및 사용법
@@ -24,10 +24,10 @@ value 접근 방법 예시: User[1]['Name']
 ### 설치(Master Node)
 
 * 1. Google에 'Etcd github' 검색
-![](/STEP1-core-concepts-of-k8s/images/01-Etcd-3.png)
+![](/STEP1-core-concepts-of-k8s/images/01-Etcd-3.png)  
 
 * 2. tar 파일 다운로드
-![](/STEP1-core-concepts-of-k8s/images/01-Etcd-4.png)
+![](/STEP1-core-concepts-of-k8s/images/01-Etcd-4.png)  
 
 ```
 $ wget https://github.com/etcd-io/etcd/releases/download/v3.4.10/etcd-v3.4.10-linux-amd64.tar.gz
@@ -90,5 +90,5 @@ value1
 # Kuberentes Etcd 데이터베이스 Key 구조(Multi Key-Value)
 
 Etcd 내부에 Kuberentes의 전체 설정 정보가 저장된다.
-![](/STEP1-core-concepts-of-k8s/images/01-Etcd-5.png)
+![](/STEP1-core-concepts-of-k8s/images/01-Etcd-5.png)  
 이미지 출처: 인프런-데브옵스를 위한 쿠버네티스 마스터
