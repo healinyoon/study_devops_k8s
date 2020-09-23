@@ -27,3 +27,5 @@
 
 # 전체 Architecture 구조
 
+![](/STEP3-resource-logging-monitoring/images/01-cluster-component-monitoring-1.png)
+이미지 출처: https://github.com/kubernetes/community/blob/master/contributors/design-proposals/instrumentation/monitoring_architecture.md
