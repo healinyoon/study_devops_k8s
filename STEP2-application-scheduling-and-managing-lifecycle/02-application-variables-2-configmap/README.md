@@ -4,7 +4,7 @@
 
 ### 개요
 * configMap은 환경 변수를 저장하기도 하지만, 그 외에도 다양한 기능이 있다(예: 스토리지에 파일 저장 등).
-* configMap은 `kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)` 명령어를 통해 1) 생성할 수 있고 2) 특정 파일로부터 환경변수 값을 얻는다.
+* configMap은 `kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)` 명령어를 통해 1) 생성할 수 있고 2) 특정 파일로부터 환경 변수 값을 얻는다.
   * file key: 파일명
   * value: 파일 내용
 * 쿠버네티스 리소스 생성시 해당 configMap을 참조하도록 설정해서 사용한다.
@@ -93,11 +93,17 @@ root@configmap-envar-demo:/# printenv | grep DEMO_GREETING
 DEMO_GREETING=1234
 ```
 
-### ConfigMap의 모든 key-value를 환경 변수로 지정하는 방법
+# ConfigMap의 모든 key-value를 환경 변수로 지정하는 방법
+
+### 개요
+
+위에서 처럼 하나씩 설정하지 않고, configMap에 저장된 모든 key-value를 환경 변수로 한번에 지정하는 방법이다.
 
 [※ 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables)
 
 ![](/STEP2-application-scheduling-and-managing-lifecycle/images/02-application-variables-2-configmap-1.png)  
+
+### 사용 방법
 
 * configMap YAML 작성
 
@@ -167,11 +173,19 @@ SPECIAL_LEVEL=very
 SPECIAL_TYPE=charm
 ```
 
-### ConfigMap을 활용한 디렉토리 마운트
+# ConfigMap을 활용한 디렉토리 마운트
+
+### 개요
 
 [※ 쿠버네티스 Add ConfigMap data to a Volume 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-volume)
 
-디렉토리 마운트를 통한 환경변수 설정 방법에 대해 설명한다.
+디렉토리 마운트를 통한 환경 변수 설정 방법에 대해 설명한다.
+
+#### 중요한 장점!!!
+이전에 설정한 방법들은 Container를 재시작해야만 환경 변수가 변경되는데,  
+volume을 통해 설정하는 경우 약 1분마다 데이터 값이 refresh되어 적용되므로, Container 외부에서도 환경 변수를 설정할 수 있게 된다.
+
+### 사용 방법
 
 * configMap YAML 작성
 
@@ -262,7 +276,7 @@ $ kubectl exec -it volumes-dapi-test-pod -- bash
 root@volumes-dapi-test-pod:/#
 ```
 
-여기서 `printenv`를 하면 안된다. 왜냐하면 환경변수로 저장하지 않고, `/etc/config/` 경로에 저장해두었기 때문이다.
+여기서 `printenv`를 하면 안된다. 왜냐하면 환경 변수로 저장하지 않고, `/etc/config/` 경로에 저장해두었기 때문이다.
 
 해당 경로에 접근해보자
 ```
@@ -271,7 +285,3 @@ root@volumes-dapi-test-pod:/etc/config# ls
 SPECIAL_LEVEL  SPECIAL_TYPE
 ```
 
-#### 중요!!
-이렇게 volumes를 마운트 하면 
-이전에 설정한 방법은 Container를 재시작해야만 환경변수가 변경되는데,  
-volume을 통해 설정하는 경우 약 1분마다 데이터 값이 refresh되어 적용되므로, Container 외부에서도 환경변수를 설정할 수 있게 된다.
