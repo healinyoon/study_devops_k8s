@@ -41,7 +41,7 @@ env:
 
 이제부터 위의 세가지 Type을 사용하여 환경 변수를 지정하는 방법을 자세히 알아보자.
 
-# Type1. YAML에 key와 value로 지정하는 방법
+# 환경 변수 설정 방법 type 1) YAML에 key와 value로 지정하는 방법
 
 ### 개요
 

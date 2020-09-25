@@ -1,4 +1,4 @@
-# Type2. ConfigMap에 환경 변수를 저장하는 방법
+# 환경 변수 설정 방법 type 2) ConfigMap에 환경 변수를 저장하는 방법
 
 [※ 쿠버네티스 configMap 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables)
 
