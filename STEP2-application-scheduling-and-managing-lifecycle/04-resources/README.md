@@ -1,15 +1,86 @@
-cpu m 단위, mem mi 단위로 많이 사용 => 작은 단위의 컨테이너를 여러개 사용하는 것을 지향
+# 시스템 리소스 요구 사항과 제한 설정
 
+[※ 쿠버네티스 Container Resource 공식 문서](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+
+### 개요
+
+* 관리자에게 주로 필요한 기술
+* CPU와 Memory는 집합적으로 컴퓨팅 리소스 또는 리소스라고 부른다.
+* CPU와 Memory는 각각 자원 유형을 지니며, 자원 유형에는 기본 단위를 사용한다.    
+* Container의 Disk에 대한 설정은 별도로 하지 않는다.
+  * 그보다는 스토리지 자체에 대한 제한을 따로 두는 편이다.
+  * 이는 Container 이미지에 이것 저것 다 넣어놓면 안되고 PV 등을 사용해야 하며,
+  * 여러 개의 Container를 띄울 경우 Cotainer Layer가 잘 구현이 되어있기 때문에 공유 항목을 실제로 모두 복제하지 않기 때문이다.
+
+### Container에서의 리소스 요구 사항
+
+![](/STEP2-application-scheduling-and-managing-lifecycle/images/04-resources-1.png)  
+이미지 출처: 인프런-데브옵스를 위한 쿠버네티스 마스터
+
+cpu m 단위, mem mi 단위로 많이 사용  
+=> **더 큰 단위를 사용하지 않는 이유는 작은 단위의 컨테이너를 여러개 사용하는 것을 지향하기 때문이다.**
+
+### 사용 방법
+
+* YAML 작성 요령
+
+> nginx-deploy.yaml
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    run: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+       run: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        resources:                <--  여기에 작성
+          requests:
+            memory: "200Mi"
+            cpu: "1m"
+          limits:
+            memory: "400Mi"
+            cpu: "2m"
+status: {}
+```
+
+| 요구사항 | 의미 |
+| --- | --- |
+| reqeusts | 최소한 보장해야하는 요구사항으로 충족되지 않으면 Pod가 뜨지 않음 |
+| limits | 최대로 사용 가능한 허용치 |
+
+* YAMl 실행
+```
 $ kubectl create -f nginx-deploy.yaml
 deployment.apps/nginx created
+```
 
+* 실행된 Pod 확인
+```
 $ kubectl get pod
 NAME                       READY   STATUS    RESTARTS   AGE
 nginx-7b47bbb85b-4vdrm     1/1     Running   0          19s
 nginx-7b47bbb85b-ldtdk     1/1     Running   0          19s
 nginx-7b47bbb85b-q8vw2     1/1     Running   0          19s
+```
 
+* Pod의 Container에 지정된 리소스 확인
+```
 $ kubectl get pod nginx-7b47bbb85b-4vdrm -o yaml
+```
 
 # limitRanges
 
