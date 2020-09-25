@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: http-go
+  labels:
+    app: http-go
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: http-go
+  template:
+    metadata:
+      labels:
+        app: http-go
+    spec:
+      containers:
+      - name: http-go
+        image: healinyoon/http-go
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "3153476Ki"
+            cpu: "700m"
+          limits:
+            memory: "4153476Ki"
+            cpu: "1000m"
