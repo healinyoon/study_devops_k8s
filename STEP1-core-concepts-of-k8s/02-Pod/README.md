@@ -57,7 +57,8 @@
 
 ### Pod YAML 작성 방법
 
-* pod 디스크립터는 https://kubernetes.io/docs/concepts/workloads/pods/ 도큐먼트 참조(쿠버네티스 API가 버전업 되기 때문에 여기서 가져오는게 제일 정확함)
+* pod 디스크립터는 https://kubernetes.io/docs/concepts/workloads/pods/ 도큐먼트 참조  
+(쿠버네티스 API가 버전업 되기 때문에 여기서 가져오는게 제일 정확함)
 
 * 다음과 같이 간단히 작성
 
