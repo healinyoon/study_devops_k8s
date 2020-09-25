@@ -279,7 +279,7 @@ root@volumes-dapi-test-pod:/#
 
 여기서 `printenv`를 하면 안된다. 왜냐하면 환경 변수로 저장하지 않고, `/etc/config/` 경로에 저장해두었기 때문이다.
 
-해당 경로에 접근해보자
+해당 경로에 접근하면 다음과 같이 파일이 마운트 된 것을 확인 할 수 있다.
 ```
 root@volumes-dapi-test-pod:/# cd /etc/config/
 root@volumes-dapi-test-pod:/etc/config# ls
