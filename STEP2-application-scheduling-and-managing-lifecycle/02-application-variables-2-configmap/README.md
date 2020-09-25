@@ -97,6 +97,8 @@ DEMO_GREETING=1234
 
 [※ 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables)
 
+![](/STEP2-application-scheduling-and-managing-lifecycle/images/02-application-variables-2-configmap-1.png)  
+
 * configMap YAML 작성
 
 > configmap-multikeys.yaml
@@ -164,3 +166,112 @@ root@dapi-test-pod:/# printenv | grep SPECIAL
 SPECIAL_LEVEL=very
 SPECIAL_TYPE=charm
 ```
+
+### ConfigMap을 활용한 디렉토리 마운트
+
+[※ 쿠버네티스 Add ConfigMap data to a Volume 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-volume)
+
+디렉토리 마운트를 통한 환경변수 설정 방법에 대해 설명한다.
+
+* configMap YAML 작성
+
+> configmap-multikeys.yaml
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+  namespace: default
+data:
+  SPECIAL_LEVEL: very
+  SPECIAL_TYPE: charm
+```
+
+* configMap YAML 실행
+여기서는 k8s 공식 문서의 링크를 파라미터로 전달하여 사용했다. 위의 YAML 내용과 동일하다.
+```
+$ kubectl create -f https://kubernetes.io/examples/configmap/configmap-multikeys.yaml
+configmap/special-config created
+```
+
+* configMap YAML 확인
+```
+$ kubectl get configmaps special-config -o yaml
+apiVersion: v1
+data:
+  SPECIAL_LEVEL: very
+  SPECIAL_TYPE: charm
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2020-09-25T06:07:23Z"
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:SPECIAL_LEVEL: {}
+        f:SPECIAL_TYPE: {}
+    manager: kubectl-create
+    operation: Update
+    time: "2020-09-25T06:07:23Z"
+  name: special-config
+  namespace: default
+  resourceVersion: "3499583"
+  selfLink: /api/v1/namespaces/default/configmaps/special-config
+  uid: 4d244acd-4265-406b-b739-d2623b33d83c
+```
+
+* 위에서 생성한 configMap을 사용하는 Pod YAML 작성
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volumes-dapi-test-pod
+spec:
+  containers:
+  - name: envar-demo-container
+    image: gcr.io/google-samples/node-hello:1.0
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config            <-- 이 경로에 special-config의 파일을 마운트 하겠다는 의미
+  volumes:
+    - name: config-volume
+      configMap:
+        # Provide the name of the ConfigMap containing the files you want
+        # to add to the container
+        name: special-config
+```
+
+* Pod YAML 실행
+```
+$ kubectl create -f pod-volumes-configmap.yaml
+pod/volumes-dapi-test-pod created
+```
+
+* 생성된 Pod 리소스 확인
+```
+$ kubectl get pod
+NAME                    READY   STATUS    RESTARTS   AGE
+volumes-dapi-test-pod   1/1     Running   0          9s
+```
+
+* Pod bash에 접속
+```
+$ kubectl exec -it volumes-dapi-test-pod -- bash
+root@volumes-dapi-test-pod:/#
+```
+
+여기서 `printenv`를 하면 안된다. 왜냐하면 환경변수로 저장하지 않고, `/etc/config/` 경로에 저장해두었기 때문이다.
+
+해당 경로에 접근해보자
+```
+root@volumes-dapi-test-pod:/# cd /etc/config/
+root@volumes-dapi-test-pod:/etc/config# ls
+SPECIAL_LEVEL  SPECIAL_TYPE
+```
+
+#### 중요!!
+이렇게 volumes를 마운트 하면 
+이전에 설정한 방법은 Container를 재시작해야만 환경변수가 변경되는데,  
+volume을 통해 설정하는 경우 약 1분마다 데이터 값이 refresh되어 적용되므로, Container 외부에서도 환경변수를 설정할 수 있게 된다.
