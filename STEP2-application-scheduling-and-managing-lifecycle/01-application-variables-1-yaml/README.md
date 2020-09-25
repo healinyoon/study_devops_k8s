@@ -41,14 +41,14 @@ env:
 
 이제부터 위의 세가지 Type을 사용하여 환경 변수를 지정하는 방법을 자세히 알아보자.
 
-# 환경 변수 설정 방법 type 1) YAML에 key와 value로 지정하는 방법
+# 환경 변수 설정 방법 type 1) YAML의 key-value
 
 ### 개요
 
 [※ Define Environment Variables 쿠버네티스 공식 문서](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/)
 
-* 가장 간편한 방법이다.
-* YAML 파일을 계속 업데이트 해줘야하는 불편함이 있다.
+* 환경 변수를 지정하는 가장 간편한 방법이다.
+* YAML 파일을 계속 업데이트 해줘야하는 불편함이 있다 => Pod를 계속 재시작 해야하는 것
 
 ### 사용 방법
 

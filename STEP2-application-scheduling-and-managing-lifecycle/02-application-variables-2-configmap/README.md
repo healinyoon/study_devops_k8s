@@ -1,8 +1,9 @@
-# 환경 변수 설정 방법 type 2) ConfigMap에 환경 변수를 저장하는 방법
+# 환경 변수 설정 방법 type 2) ConfigMap
 
 [※ 쿠버네티스 configMap 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables)
 
 ### 개요
+* configMap이라는 쿠버네티스 리소스를 이용하여 환경 변수를 지정한다.
 * configMap은 환경 변수를 저장하기도 하지만, 그 외에도 다양한 기능이 있다(예: 스토리지에 파일 저장 등).
 * configMap은 `kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)` 명령어를 통해 1) 생성할 수 있고 2) 특정 파일로부터 환경 변수 값을 얻는다.
   * file key: 파일명
