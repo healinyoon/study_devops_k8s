@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: http-go-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: gasbugs.com
+    http:
+      paths:
+      - path: /hostname
+        backend:
+          serviceName: http-go
+          servicePort: 8080
