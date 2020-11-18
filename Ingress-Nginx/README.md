@@ -84,7 +84,7 @@ Welcome! http-go-568f649bb-r6psq
 
 위의 경로에서 본인의 환경에 해당하는 명령어를 사용하면 된다.
 ```
-$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.2/deploy/static/provider/cloud/deploy.yaml
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.2/deploy/static/provider/baremetal/deploy.yaml
 namespace/ingress-nginx created
 serviceaccount/ingress-nginx created
 configmap/ingress-nginx-controller created
@@ -117,9 +117,9 @@ deployment.apps/ingress-nginx-controller created
 
 service의 내용을 확인해보자. `ingress-nginx` Namespace에 설치되어 있는 것을 볼 수 있다.
 ```
-$ kubectl get service/ingress-nginx-controller -n ingress-nginx
-NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-ingress-nginx-controller   LoadBalancer   10.98.119.197   <pending>     80:32194/TCP,443:30483/TCP   7m50s
+$ kubectl get svc ingress-nginx-controller -n ingress-nginx
+NAME                       TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+ingress-nginx-controller   NodePort   10.104.233.162   <none>        80:30424/TCP,443:31648/TCP   24s
 ```
 
 이제 `ingress-nginx`와 `http-go`를 연결하는 ingress를 만들어주면 된다.
@@ -136,33 +136,82 @@ ingress-nginx-controller   LoadBalancer   10.98.119.197   <pending>     80:32194
 
 추가로, 도메인 이름은 gasbugs.com을 사용하고 /hostsname 경로를 사용하도록 만들었기 때문에 반드시http://gasbugs.com/hostsname으로 요청해야만 http-go로 연결된다.
 
-
-
-ingrees-nginx 설치부터 얘로 다시 해보자
+> http-go-ingress.yaml
 ```
-$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.41.2/deploy/static/provider/baremetal/deploy.yaml
-namespace/ingress-nginx created
-serviceaccount/ingress-nginx created
-configmap/ingress-nginx-controller created
-clusterrole.rbac.authorization.k8s.io/ingress-nginx created
-clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx created
-role.rbac.authorization.k8s.io/ingress-nginx created
-rolebinding.rbac.authorization.k8s.io/ingress-nginx created
-service/ingress-nginx-controller-admission created
-service/ingress-nginx-controller created
-deployment.apps/ingress-nginx-controller created
-validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
-serviceaccount/ingress-nginx-admission created
-clusterrole.rbac.authorization.k8s.io/ingress-nginx-admission created
-clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
-role.rbac.authorization.k8s.io/ingress-nginx-admission created
-rolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
-job.batch/ingress-nginx-admission-create created
-job.batch/ingress-nginx-admission-patch created
-
-$ kubectl get svc ingress-nginx-controller -n ingress-nginx
-NAME                       TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-ingress-nginx-controller   NodePort   10.104.233.162   <none>        80:30424/TCP,443:31648/TCP   24s
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: http-go-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: gasbugs.com
+    http:
+      paths:
+      - path: /hostname
+        backend:
+          serviceName: http-go
+          servicePort: 8080
 ```
 
-여기서부터 다시해보기
+`http-go-ingress` 룰을 아래와 같이 생성하고,
+```
+$ kubectl create -f http-go-ingress.yaml
+Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
+ingress.extensions/http-go-ingress created
+```
+
+생성된 룰을 통해 접속을 해보자.
+```
+$ curl -i 127.0.0.1:30424
+HTTP/1.1 404 Not Found
+Date: Wed, 18 Nov 2020 07:44:33 GMT
+Content-Type: text/html
+Content-Length: 146
+Connection: keep-alive
+
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+```
+
+**여기서부터 재 정리 필요**
+
+현재 `404` 에러가 발생하는데, 발생하는 이유는 앞의 domain name과 uri가 일치하지 않기 때문이다.
+domain name을 일치시키 위해서 /etc/hosts를 조작해보자
+```
+127.0.0.1 localhost
+
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+20.194.41.47 	master
+20.194.44.233	worker1
+20.194.39.86	worker2
+
+127.0.0.1 gasbugs.com
+```
+
+uri까지 일치시키면 이제 잘된다.
+```
+$ curl -i gasbugs.com:30424/hostname
+HTTP/1.1 200 OK
+Date: Wed, 18 Nov 2020 08:57:25 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 33
+Connection: keep-alive
+
+Welcome! http-go-568f649bb-r6psq
+```
+
+
