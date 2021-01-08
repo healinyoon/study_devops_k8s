@@ -2,11 +2,13 @@
 
 ### 개요
 
-사용자가 실행시키지 않고 static pod의 위치를 지정하여 kubelet에 의해 실행되는 Pod이다. YAML을 변경만 해도 자동으로 kubelet에 의해 반영된다.
+사용자가 실행시키지 않고 static pod의 위치를 지정하여 kubelet에 의해 실행되는 Pod이다. Static Pod 경로의 YAML을 변경만 해도 자동으로 kubelet에 의해 반영된다.
 
 ### Static Pod 위치 지정 방법
 
-#### 1. Static Pod 위치 지정 파일 조회
+#### 1. Static Pod 위치를 지정해주는 파일을 알아보자.
+
+`Loaded: loaded (/lib/systemd/system/kubelet.service; enabled; vendor preset: enabled)` 출력을 통해 Static Pod의 경로를 명시해주는 파일을 알 수 있다.
 
 ```
 $ sudo systemctl status kubelet
@@ -25,10 +27,12 @@ $ sudo systemctl status kubelet
 
 #### 2. `/lib/systemd/system/kubelet.service` 파일 수정
 
+해당 파일을 수정하면 Static Pod 경로를 추가할 수 있다.
+
 ```
 # vi /lib/systemd/system/kubelet.servic
 
-ExecStart 목록에 --pod-manifest-path=/etc/kubelet.d 추가
+ExecStart= 에 --pod-manifest-path=/etc/kubelet.d 추가
 ```
 
 #### 3. daemon reload 및 kubelete restart
@@ -37,7 +41,6 @@ ExecStart 목록에 --pod-manifest-path=/etc/kubelet.d 추가
 # systemctl daemon-reload
 # systemctl restart kubelet
 ```
-
 
 # Static Pod의 기본 경로
 
