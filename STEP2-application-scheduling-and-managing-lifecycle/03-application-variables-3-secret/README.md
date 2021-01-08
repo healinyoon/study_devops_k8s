@@ -16,20 +16,20 @@ Volume 마운트도 물론 가능하다.
 
 ### Command로 Secret을 생성하는 방법
 
-* 환경 변수 파일 생성
+#### 1. 환경 변수 파일 생성
 ```
 $ echo -n 'admin' > ./username
 $ echo -n '111222333' > ./password
 ```
 
-* Secret 생성
+#### 2. Secret 생성
 ```
 $ kubectl create secret generic db-user-pass --from-file=./username --from-file=./password
 secret/db-user-pass created
 ```
 위의 명령어를 통해 `db-user-pass` Secret이 생성된다.
 
-* Secret 조회
+#### 3. 생성된 Secret 조회
 ```
 $ kubectl get secret db-user-pass -o yaml
 apiVersion: v1
@@ -59,7 +59,7 @@ metadata:
 type: Opaque
 ```
 
-* 디코딩 해보고 싶다면
+#### (참고) 디코딩 해보고 싶다면
 ```
 (형식)
 $ echo {인코딩된 데이터} | base64 --decode
@@ -68,7 +68,7 @@ $ echo {인코딩된 데이터} | base64 --decode
 $ echo MTExMjIyMzMz | base64 --decode
 ```
 
-* 위에서 생성한 Secret을 사용하는 Pod YAML 작성
+#### 4. 위에서 생성한 Secret을 사용하는 Pod YAML 작성
 
 > envar-secret.yaml
 ```
@@ -95,13 +95,13 @@ spec:
           key: password
 ```
 
-* Pod YAML 실행
+#### 5. Pod YAML 실행
 ```
 $ kubectl create -f envar-secret.yaml
 pod/secret-envar-demo created
 ```
 
-* Pod bash에 접속해서 env 확인
+#### 6. Pod bash에 접속해서 env 확인
 ```
 $ kubectl exec -it secret-envar-demo -- bash
 root@secret-envar-demo:/# printenv
@@ -113,7 +113,7 @@ USER=admin
 
 수동으로 YAML 데이터를 만들어야 하는 경우에는 base64 인코딩을 수동으로 해서 넣어줘야 한다.
 
-* 인코딩
+#### 1. 인코딩
 
 > 예시
 ```
@@ -124,7 +124,7 @@ $ echo -n '111222333' | base64
 MTExMjIyMzMz
 ```
 
-* Secret YAML 파일 작성
+#### 2. Secret YAML 파일 작성
 ```
 apiVersion: v1
 kind: Secret
