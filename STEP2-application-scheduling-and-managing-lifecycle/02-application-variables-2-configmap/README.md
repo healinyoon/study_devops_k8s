@@ -199,7 +199,7 @@ volume을 통해 설정하는 경우 약 1분마다 데이터 값이 refresh되�
 
 ### 사용 방법
 
-* configMap YAML 작성
+#### 1. configMap YAML 작성
 
 > configmap-multikeys.yaml
 ```
@@ -213,14 +213,14 @@ data:
   SPECIAL_TYPE: charm
 ```
 
-* configMap YAML 실행
+#### 2. configMap YAML 실행
 여기서는 k8s 공식 문서의 링크를 파라미터로 전달하여 사용했다. 위의 YAML 내용과 동일하다.
 ```
 $ kubectl create -f https://kubernetes.io/examples/configmap/configmap-multikeys.yaml
 configmap/special-config created
 ```
 
-* configMap YAML 확인
+#### 3. configMap YAML 확인
 ```
 $ kubectl get configmaps special-config -o yaml
 apiVersion: v1
@@ -248,7 +248,7 @@ metadata:
   uid: 4d244acd-4265-406b-b739-d2623b33d83c
 ```
 
-* 위에서 생성한 configMap을 사용하는 Pod YAML 작성
+#### 4. 위에서 생성한 configMap을 사용하는 Pod YAML 작성
 ```
 apiVersion: v1
 kind: Pod
@@ -269,20 +269,20 @@ spec:
         name: special-config
 ```
 
-* Pod YAML 실행
+#### 5. Pod YAML 실행
 ```
 $ kubectl create -f pod-volumes-configmap.yaml
 pod/volumes-dapi-test-pod created
 ```
 
-* 생성된 Pod 리소스 확인
+#### 6. 생성된 Pod 리소스 확인
 ```
 $ kubectl get pod
 NAME                    READY   STATUS    RESTARTS   AGE
 volumes-dapi-test-pod   1/1     Running   0          9s
 ```
 
-* Pod bash에 접속
+#### 7. Pod bash에 접속
 ```
 $ kubectl exec -it volumes-dapi-test-pod -- bash
 root@volumes-dapi-test-pod:/#
