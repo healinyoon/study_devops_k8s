@@ -25,7 +25,7 @@ env:
 
 ### 사용 방법
 
-#### 1. 값이 저장된 파일 생성
+#### 1. 환경변수 값이 저장된 파일 생성
 ```
 $ echo -n 1234 > data
 ```
@@ -35,7 +35,7 @@ $ echo -n 1234 > data
 $ kubectl create configmap test-configmap --from-file=data
 configmap/test-configmap created
 ```
-다수의 file을 지정할 수도 있다('--from-file={file 명}'을 더 추가하면 됨).
+다수의 file을 매칭 할 수도 있다('--from-file={file 명}'을 더 추가하면 됨).
 
 #### 3. 생성된 configMap 조회
 ```
@@ -117,7 +117,7 @@ DEMO_GREETING=1234
 
 ### 사용 방법
 
-* configMap YAML 작성
+#### 1. configMap YAML 작성
 
 > configmap-multikeys.yaml
 ```
@@ -131,20 +131,20 @@ data:
   SPECIAL_TYPE: charm
 ```
 
-* configMap YAML 실행
+#### 2. configMap YAML 실행
 ```
 $ kubectl create -f configmap-multikeys.yaml
 configmap/special-config created
 ```
 
-* 생성된 configMap 리소스 확인
+#### 3. 생성된 configMap 리소스 확인
 ```
 $ kubectl get configmap
 NAME             DATA   AGE
 special-config   2      32s
 ```
 
-* 위에서 생성한 configMap을 사용하는 Pod YAML 작성
+#### 4. 위에서 생성한 configMap을 사용하는 Pod YAML 작성
 
 Use `envFrom` to define all of the ConfigMap's data as container environment variable
 
@@ -164,20 +164,20 @@ spec:
   restartPolicy: Never
 ```
 
-* Pod YAML 실행
+#### 5. Pod YAML 실행
 ```
 $ kubectl apply  -f pod-configmap-envFrom.yaml
 pod/dapi-test-pod created
 ```
 
-* 생성된 Pod 리소스 확인
+#### 6. 생성된 Pod 리소스 확인
 ```
 $ kubectl get pod dapi-test-pod
 NAME            READY   STATUS    RESTARTS   AGE
 dapi-test-pod   1/1     Running   0          94s
 ```
 
-* Pod bash에 접속해서 env 확인
+#### 7. Pod bash에 접속해서 env 확인
 ```
 $ kubectl exec -it dapi-test-pod  -- bash
 root@dapi-test-pod:/# printenv | grep SPECIAL
