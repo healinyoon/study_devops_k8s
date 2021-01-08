@@ -22,21 +22,21 @@ kubernetes의 환경 변수를 전달하는 방법은 크게 2가지로 나뉜�
 
 ### 환경 변수 설정 예시
 
-##### Type1. YAML에 key와 value로 지정
+#### Type1. YAML에 key와 value로 지정
 ```
 env:
 - name: DEMO_GREETING
   value: "Hello k8s env"
 ```
 
-##### Type2. ConfigMap
+#### Type2. ConfigMap
 ```
 - name: DEMO_GREETING
   valueFrom:
     configMapKeyRef: configmap-name     <-- 외부에서 파일 참조
 ```
 
-##### Type3. Secrets
+#### Type3. Secrets
 ```
 - name: DEMO_GREETING
   valueFrom:
@@ -45,7 +45,7 @@ env:
 
 이제부터 위의 세가지 Type을 사용하여 환경 변수를 지정하는 방법을 자세히 알아보자.
 
-# 환경 변수 설정 방법 type 1) YAML의 key-value
+# Type 1) YAML의 key-value
 
 ### 개요
 
