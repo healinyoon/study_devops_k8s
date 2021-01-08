@@ -9,7 +9,7 @@
 
 kubernetes의 환경 변수를 전달하는 방법은 크게 2가지로 나뉜다.
 1. YAML `env` object에 직접 key-value로 전달하는 방법
-2. Pod 외부의 리소스로 환경 변수를 지정하고 전달하는 방법이다.
+2. Pod 외부의 리소스로 환경 변수를 지정하고 전달하는 방법
 
 각 방법은 아래의 장/단점을 가진다.
 
@@ -17,26 +17,26 @@ kubernetes의 환경 변수를 전달하는 방법은 크게 2가지로 나뉜�
     * 설정하기 쉽다.
     * 하드 코딩된 환경 변수는 여러 환경에 데이터를 정의, 유지, 관리가 어렵다.
 2. Pod 외부의 리소스로 환경 변수를 지정하고 전달하는 경우
-    * 별도의 리소스를 두어야 하지만
+    * 별도의 리소스를 두어야 하지만,
     * `configMap` 또는 `Secret`을 사용하면 정의, 유지, 관리가 용이하다.
 
 ### 환경 변수 설정 예시
 
-* Type1. YAML에 key와 value로 지정
+##### Type1. YAML에 key와 value로 지정
 ```
 env:
 - name: DEMO_GREETING
   value: "Hello k8s env"
 ```
 
-* Type2. ConfigMap
+##### Type2. ConfigMap
 ```
 - name: DEMO_GREETING
   valueFrom:
     configMapKeyRef: configmap-name     <-- 외부에서 파일 참조
 ```
 
-* Type3. Secrets
+##### Type3. Secrets
 ```
 - name: DEMO_GREETING
   valueFrom:
