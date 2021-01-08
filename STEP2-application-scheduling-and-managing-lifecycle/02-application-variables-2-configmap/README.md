@@ -1,16 +1,17 @@
-# 환경 변수 설정 방법 type 2) ConfigMap
+# Type 2) ConfigMap로 환경 변수 설정
 
 [※ 쿠버네티스 configMap 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables)
 
 ### 개요
 * configMap이라는 쿠버네티스 리소스를 이용하여 환경 변수를 지정한다.
 * configMap은 환경 변수를 저장하기도 하지만, 그 외에도 다양한 기능이 있다(예: 스토리지에 파일 저장 등).
-* configMap은 `kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)` 명령어를 통해 1) 생성할 수 있고 2) 특정 파일로부터 환경 변수 값을 얻는다.
+* configMap은 아래의 명령어를 통해 생성할 수 있고, 특정 파일로부터 환경 변수 값을 얻는다.
+  * `kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)`
   * file key: 파일명
   * value: 파일 내용
-* 쿠버네티스 리소스 생성시 해당 configMap을 참조하도록 설정해서 사용한다.
-  * 쿠버네티스 리소스의 `spec.containers.env`의 `configMapKeyRef.name`과 configMap의 `metadata.name`을 매칭시킨다.
-  * 쿠버네티스 리소스의 `spec.containers.env`의 `configMapKeyRef.key`와 configMap의 `data.{파일 명}`을 매칭시킨다.
+* 쿠버네티스 리소스 생성시 미리 생성한 configMap을 참조하도록 설정해서 사용한다.
+  * 쿠버네티스 리소스의 `spec.containers.env.configMapKeyRef.name`과 configMap의 `metadata.name`을 매칭시킨다.
+  * 쿠버네티스 리소스의 `spec.containers.env.configMapKeyRef.key`와 configMap의 `data.{파일 명}`을 매칭시킨다.
   * 쿠버네티스 리소스의 `env.name`이 환경 변수 명, file에 저장된 값이 환경 변수 값이 된다.
 
 ### 사용 방법
