@@ -3,7 +3,7 @@
 [※ 쿠버네티스 configMap 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables)
 
 ### 개요
-**configMap**이라는 k8s 리소스를 사용하여 환경 변수를 지정한다. configMap은 환경 변수를 저장하기도 하지만, 그 외에도 다양한 기능이 있다(예: 스토리지에 파일 저장 등).
+**configMap**이라는 쿠버네티스 리소스를 사용하여 환경 변수를 지정한다. configMap은 환경 변수를 저장하는데 사용되기도 하지만, 그 외에도 다양한 기능이 있다(예: 스토리지에 파일 저장 등).
 
 configMap은 다음 명령어를 통해 생성할 수 있고, 특정 파일로부터 환경 변수 값을 얻는다. 
 
@@ -11,37 +11,38 @@ configMap은 다음 명령어를 통해 생성할 수 있고, 특정 파일로�
 kubectl create configmap {configMap 명} --from-file={file 명}...(여러 개 입력 가능)
 ```
 
-쿠버네티스 리소스 생성시 미리 생성한 configMap을 참조하도록 설정해서 사용한다.
+쿠버네티스 리소스를 구성할 때 미리 생성한 configMap을 참조하도록 설정해서 사용한다.
 
 ```
 env:
 - name: DEMO_GREETING               <-- 환경 변수 명
   valueFrom:
-    configMapKeyRef:                <-- configmap으로 전달받는다.
+    configMapKeyRef:                <-- 환경변수를 configmap 타입으로 전달받겠다.
       name: test-configmap          <-- configmap의 metadata.name과 매칭
       key: data                     <-- configmap의 data.{file 명}과 매칭
 ```
-이렇게 설정하면 쿠버네티스 리소스의 `env.name`이 환경 변수 명, file에 저장된 값이 환경 변수 값이 된다.
+이렇게 설정하면 쿠버네티스 리소스의 `env.name`이 환경 변수 명, configmap의 `data.{file 명}`에 저장된 값이 환경 변수 값이 된다.
 
 ### 사용 방법
 
-* 데이터 파일 생성
+#### 1. 값이 저장된 파일 생성
 ```
 $ echo -n 1234 > data
 ```
 
-* configMap 생성
+#### 2. 파일을 참조하는 configMap 생성
 ```
 $ kubectl create configmap test-configmap --from-file=data
 configmap/test-configmap created
 ```
+다수의 file을 지정할 수도 있다('--from-file={file 명}'을 더 추가하면 됨).
 
-* 생성된 configMap 조회
+#### 3. 생성된 configMap 조회
 ```
 $ kubectl get configmap test-configmap -o yaml
 apiVersion: v1
 data:
-  data: "1234"                              <--  다수의 file을 지정할 수도 있다('--from-file={file 명}'을 더 추가하면 됨).
+  data: "1234"                              
 kind: ConfigMap
 metadata:
   creationTimestamp: "2020-09-16T08:41:54Z"
@@ -62,7 +63,7 @@ metadata:
   uid: 1865162a-b9ec-48a5-a680-79ff899e0d19
 ```
 
-* 위에서 생성한 configMap을 사용하는 Pod YAML 작성
+#### 4. configMap을 참조하는 Pod YAML 작성
 
 > configmap-envar-demo.yaml
 ```
@@ -79,25 +80,25 @@ spec:
     env:
     - name: DEMO_GREETING               <-- 환경 변수 명
       valueFrom:
-        configMapKeyRef:                <-- 아래를 통해 참조한 configmap을 통해 환경 변수 값을 얻는다.
+        configMapKeyRef:                <-- 환경변수를 configmap 타입으로 전달받겠다.
           name: test-configmap          <-- configmap의 metadata.name과 매칭
-          key: data                     <-- configmap의 data.{파일 명}과 매칭
+          key: data                     <-- configmap의 data.{file 명}과 매칭
 ```
 
-* YAML 실행
+#### 5.Pod YAML 실행
 ```
 $ kubectl create -f configmap-envar-demo.yaml
 pod/configmap-envar-demo created
 ```
 
-* 생성된 Pod 리소스 확인
+#### 6. 생성된 Pod 리소스 확인
 ```
 $ kubectl get Pod
 NAME                       READY   STATUS    RESTARTS   AGE
 configmap-envar-demo       1/1     Running   0          35s
 ```
 
-* Pod bash에 접속해서 env 확인
+#### 7. Pod bash에 접속해서 env 확인
 ```
 $ kubectl exec -it configmap-envar-demo -- bash
 root@configmap-envar-demo:/# printenv | grep DEMO_GREETING
@@ -108,7 +109,7 @@ DEMO_GREETING=1234
 
 ### 개요
 
-위에서 처럼 하나씩 설정하지 않고, configMap에 저장된 모든 key-value를 환경 변수로 한번에 지정하는 방법이다.
+위에서 처럼 configMap에 매칭된 file을 하나씩 가져와서 설정하지 않고, configMap에 저장된 모든 file을 환경 변수로 한번에 지정하는 방법이다.
 
 [※ 공식 문서](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables)
 
