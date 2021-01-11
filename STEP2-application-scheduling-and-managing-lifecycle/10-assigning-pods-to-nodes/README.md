@@ -1,5 +1,7 @@
 # Pod의 수동 scheduling: 원하는 Pod를 원하는 Node에
 
+[쿠버네티스 Assign Pod to Node 공식 문서 ](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+
 ### 개요
 
 특정 Node에 종속되어 실행되도록 Pod를 제한한다. 일반적으로 scheduler는 자동으로 합리적인 배치를 수행하므로 이러한 제한이 불필요하지만, 다음과 같은 케이스에서 사용될 수 있다.
