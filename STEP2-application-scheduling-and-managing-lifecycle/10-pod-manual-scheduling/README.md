@@ -13,6 +13,17 @@
 * Pod를 강제로 원하는 Node에 manually scheduling
 * `nodeName` object에 지정
 
+#### step 1. Node Name 조회
+```
+# kubectl get nodes
+NAME      STATUS   ROLES    AGE    VERSION
+master    Ready    master   124d   v1.19.0
+worker1   Ready    <none>   124d   v1.19.0
+worker2   Ready    <none>   124d   v1.19.0
+```
+
+#### step 2. Node Selector 지정
+
 > nodeName.yaml
 ```
 apiVersion: v1
@@ -23,8 +34,9 @@ spec:
   containers:
   - name: http-go
     image: gasbugs/http-go
-  nodeName: worker1
+  nodeName: {node name}
 ```
+
 
 ### 방법 2. nodeSelector을 활용한 scheduling
 
@@ -32,15 +44,24 @@ spec:
 * GPU, SSD 등의 이슈를 가진 사항을 적용
 * Node에 label 지정 후 `nodeSelector` object에 지정
 
-#### 1. Node에 label 지정
+#### step 1. Node에 label 지정
 ```
 # kubectl label node {node name} {label key=value}
 # kubectl get node --show-labels
 ```
 
-#### 2. Node Selector 지정
+#### step 2. Node Selector 지정
 
 > nodeSelector.yaml
 ```
-
+apiVersion: v1
+kind: Pod
+metadata:
+  name: http-go
+spec:
+  containers:
+  - name: http-go
+    image: gasbugs/http-go
+  nodeSelector:
+    {key}: "{value}"
 ```

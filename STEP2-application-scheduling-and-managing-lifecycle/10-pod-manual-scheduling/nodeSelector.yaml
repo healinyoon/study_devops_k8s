@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: http-go
+  name: http-go-gpu
 spec:
   containers:
   - name: http-go
