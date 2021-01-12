@@ -227,4 +227,29 @@ token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IkpjTllWSlE4dk1tNlZkcnpGRXNTS3hDQ2c1cHhC
 
 
 이유는 Kubernetes를 Control할 권한이 해당 Serviec Account에 없기 때문이다 ㅠㅠ..
+이때 필요한 것이 RBAC이다.
+
+
+-- 여기서부터 ssl 접속 불가로 실습 불가 --
+
+### 7. Service Account token 으로 Web 로그인
+
+cluster-admin 권한을 kubernetes-dashboard에게 부여한다.
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+```
+
+이제 dashboard에서 관찰 가능하다. 모니터링 뿐만 아니라 resource 수정, 삭제도 가능하다.
 
