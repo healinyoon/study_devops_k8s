@@ -93,18 +93,18 @@ Detected that your cluster does not support third party JWT authentication. Fall
 
 #### 3. Namespace lable 설정
 
-Istio 설치가 완료되면 Namespace 마다 Istio를 적용할지 설정할 수 있다. Namespace에 `istio-injection=enabled` label을 추가하면 Istio개 바로 적용된다.
+Istio 설치가 완료되면 Namespace 마다 Istio를 적용할지 설정할 수 있다. Namespace에 `istio-injection=enabled` label을 추가하면 Istio가 바로 적용된다.
 
 ```
 $ kubectl label namespace default istio-injection=enabled
 namespace/default labeled
 ```
 
-### Sample 프로젝트에 Istio 적용해서 관찰해보기
+### Sample 프로젝트 Application 생성
 
 [Sample 프로젝트(Book Info)](https://istio.io/latest/docs/examples/bookinfo/)
 
-Sample 프로젝트 `booinfo`를 사용하여 Istio를 사용해보자.
+Sample 프로젝트 `bookinfo`를 사용하여 Istio를 사용해보자.
 
 ![](/STEP4-istio/images/bookinfo.svg)
 
@@ -161,9 +161,9 @@ bookinfo-gateway   43s
 
 #### 3. Gateway YAML 파일 확인 
 
+> samples/bookinfo/networking/bookinfo-gateway.yaml
 ```
-# vi samples/bookinfo/networking/bookinfo-gateway.yaml
-piVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: bookinfo-gateway
@@ -206,9 +206,9 @@ spec:
           number: 9080
 ```
 
-이 gateway는 istio-system의 레이블이 `istio=ingressgateway`인 svc에 설정을 추가한다.
+이 gateway는 `istio=ingressgateway`인 svc에 설정을 추가한다(svc는 `istio-system` Namespace에 있다).
 
-#### 4. svc 확인
+#### 4. svc에 Gateway가 적용된 것 확인
 
 ```
 $ kubectl get svc -n istio-system -l istio=ingressgateway
@@ -217,3 +217,100 @@ istio-ingressgateway   LoadBalancer   10.96.78.29   <pending>     15021:30564/TC
 ```
 
 #### 5. 접속 테스트
+
+`http://{ip}:{port}/productpage`경로로 접속해보자.
+
+![](/STEP4-istio/images/web.png)
+
+
+### 외부에서 Application Pod에 연결되는 프로세스
+
+외부에서 Application Pod에 연결되는 프로세스를 살펴보면 다음과 같다. 외부 트래픽은 **Istio-Ingress**로부터 들어와서 **Gateway**를 통해 실제 서비스하는 **Application Pod**로 연결된다.
+
+
+# Istio 대시보드: Kiali
+
+`istioctl dashboar` 명령어를 사용하면 다양한 서비스에 접근이 가능하다. 원하는 서비스를 선택하면 된다.
+
+```
+$ istioctl dashboard
+Access to Istio web UIs
+
+Usage:
+  istioctl dashboard [flags]
+  istioctl dashboard [command]
+
+Aliases:
+  dashboard, dash, d
+
+Available Commands:
+  controlz    Open ControlZ web UI
+  envoy       Open Envoy admin web UI
+  grafana     Open Grafana web UI
+  jaeger      Open Jaeger web UI
+  kiali       Open Kiali web UI
+  prometheus  Open Prometheus web UI
+  zipkin      Open Zipkin web UI
+```
+
+**Kiali**를 사용하면 현재 구동되는 Application의 트래픽 구조를 확인할 수 있다. 
+
+
+#### 1. Kiali 및 기타 add-on 설치
+
+```
+$ kubectl apply -f samples/addons
+$ kubectl rollout status deployment/kiali -n istio-system
+deployment "kiali" successfully rolled out
+```
+
+만약 설치 중에 오류가 발생하면 명령어를 다시 실행하면 된다. 
+
+
+#### 2. Kiali svc serviceType 수정
+
+Kiali의 svc이 serviceType이 ClusterIP이므로 NodePort로 변경해준다.
+
+```
+$ kubectl get svc -n istio-system
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                      AGE
+kiali                  ClusterIP      10.106.235.188   <none>        20001/TCP,9090/TCP                                                           19m
+```
+
+```
+$ kubectl edit svc kiali -n istio-system
+service/kiali edited
+```
+
+```
+$ kubectl get svc -n istio-system
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                      AGE
+kiali                  NodePort       10.106.235.188   <none>        20001:31544/TCP,9090:30248/TCP                                               21m
+```
+
+
+#### 2. Kiali 브라우저 실행
+
+```
+$ istioctl dashboard kiali
+http://localhost:20001/kiali
+```
+
+#### 3. Kiali 브라우저 접속
+
+![](/STEP4-istio/images/kiali.png)
+
+
+현재 트래픽이 거의 없는데, 일부러 트래픽을 발생시켜서 관찰해보자.
+
+#### 4. 의도적인 트래픽 생성 및 관찰
+
+아래 명령어를 통해 2초에 한번씩 트래픽을 발생시킨다.
+
+```
+$ watch "curl http://127.0.0.1:32330/productpage"
+```
+
+Kiali 홈 > [Graph] > [default Namespace]로 접속하면 다음과 같이 트래픽이 그래프로 출력되는 것을 확인할 수 있다. 
+
+![](/STEP4-istio/images/traffic-graph.png)
