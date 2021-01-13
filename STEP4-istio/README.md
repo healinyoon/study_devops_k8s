@@ -57,3 +57,163 @@ Istio를 설치할 때 원하는 프로파일을 지정하여 구성할 수 있�
 | istio-egressgateway | | O | | | | |
 | istio-ingressgateway | O | O | | | | O |
 | istiod | O | O | O | | | O |
+
+
+### istioctl을 활용한 istio 설치
+
+istio 설치를 이어서 진행한다. `$ istioctl install --set profile={프로파일 타입} -y` 명령어를 사용하여 간단하게 설치할 수 있다.
+
+#### 1. 프로파일 조회
+
+```
+$ istioctl profile list
+Istio configuration profiles:
+    default
+    demo
+    empty
+    minimal
+    openshift
+    preview
+    remote
+```
+
+#### 2. demo 프로파일 설치
+
+```
+$ istioctl install --set profile=demo -y
+Detected that your cluster does not support third party JWT authentication. Falling back to less secure first party JWT. See https://istio.io/v1.8/docs/ops/best-practices/security/#configure-third-party-service-account-tokens for details.
+✔ Istio core installed
+✔ Istiod installed
+✔ Ingress gateways installed
+✔ Egress gateways installed
+✔ Installation complete
+```
+
+여기까지 진행하면 istio를 사용할 수 있는 환경 설정이 완료된다.
+
+#### 3. Namespace lable 설정
+
+Istio 설치가 완료되면 Namespace 마다 Istio를 적용할지 설정할 수 있다. Namespace에 `istio-injection=enabled` label을 추가하면 Istio개 바로 적용된다.
+
+```
+$ kubectl label namespace default istio-injection=enabled
+namespace/default labeled
+```
+
+### Sample 프로젝트에 Istio 적용해서 관찰해보기
+
+[Sample 프로젝트(Book Info)](https://istio.io/latest/docs/examples/bookinfo/)
+
+Sample 프로젝트 `booinfo`를 사용하여 Istio를 사용해보자.
+
+![](/STEP4-istio/images/bookinfo.svg)
+
+그림 출처: https://istio.io/latest/docs/examples/bookinfo/
+
+```
+$ kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+service/details created
+serviceaccount/bookinfo-details created
+deployment.apps/details-v1 created
+service/ratings created
+serviceaccount/bookinfo-ratings created
+deployment.apps/ratings-v1 created
+service/reviews created
+serviceaccount/bookinfo-reviews created
+deployment.apps/reviews-v1 created
+deployment.apps/reviews-v2 created
+deployment.apps/reviews-v3 created
+service/productpage created
+serviceaccount/bookinfo-productpage created
+deployment.apps/productpage-v1 created
+```
+
+```
+$  kubectl get pod
+NAME                              READY   STATUS    RESTARTS   AGE
+details-v1-79c697d759-85bfd       2/2     Running   0          2m55s
+productpage-v1-65576bb7bf-l7csc   2/2     Running   0          2m53s
+ratings-v1-7d99676f7f-7x8nl       2/2     Running   0          2m54s
+reviews-v1-987d495c-r52wh         2/2     Running   0          2m53s
+reviews-v2-6c5bf657cf-n5vwl       2/2     Running   0          2m54s
+reviews-v3-5f7b9f4f77-2fpzb       2/2     Running   0          2m54s
+```
+
+### Gateway 설치와 관찰
+
+위에서 Application을 생성했지만, Gateway를 추가로 생성해야 외부에서 접근 가능해진다. Gateway는 Istio가 배포한 커스터마이징된 object로, Kubernetes에서 제공되는 Ingress 처럼 동작한다.
+
+#### 1. Gateway 설치
+
+```
+$ kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+gateway.networking.istio.io/bookinfo-gateway created
+virtualservice.networking.istio.io/bookinfo created
+```
+
+#### 2. Gateway 설치 확인
+
+```
+$ kubectl get gateway
+NAME               AGE
+bookinfo-gateway   43s
+```
+
+#### 3. Gateway YAML 파일 확인 
+
+```
+# vi samples/bookinfo/networking/bookinfo-gateway.yaml
+piVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookinfo-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookinfo
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bookinfo-gateway
+  http:
+  - match:
+    - uri:
+        exact: /productpage
+    - uri:
+        prefix: /static
+    - uri:
+        exact: /login
+    - uri:
+        exact: /logout
+    - uri:
+        prefix: /api/v1/products
+    route:
+    - destination:
+        host: productpage
+        port:
+          number: 9080
+```
+
+이 gateway는 istio-system의 레이블이 `istio=ingressgateway`인 svc에 설정을 추가한다.
+
+#### 4. svc 확인
+
+```
+$ kubectl get svc -n istio-system -l istio=ingressgateway
+NAME                   TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)                                                                      AGE
+istio-ingressgateway   LoadBalancer   10.96.78.29   <pending>     15021:30564/TCP,80:32330/TCP,443:32761/TCP,31400:32742/TCP,15443:32720/TCP   147m
+```
+
+#### 5. 접속 테스트
