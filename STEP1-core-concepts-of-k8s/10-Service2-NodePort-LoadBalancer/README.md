@@ -25,7 +25,7 @@ Service yaml 파일 작성시 Service type을 NodePort로 지정해주면 된다
 
 * Service yaml 파일 예시
 ```
-apiVersion v1
+apiVersion: v1
 kind: Service
 metadata:
   name: http-go-np
