@@ -311,6 +311,8 @@ http://localhost:20001/kiali
 $ watch "curl http://127.0.0.1:32330/productpage"
 ```
 
-Kiali 홈 > [Graph] > [default Namespace]로 접속하면 다음과 같이 트래픽이 그래프로 출력되는 것을 확인할 수 있다. 
+Kiali 홈 > [Graph] > [default Namespace]로 접속하면, 다음과 같이 트래픽이 그래프로 출력되는 것을 확인할 수 있다. 
 
 ![](/STEP4-istio/images/traffic-graph.png)
+
+그외의 Application 들의 상태 조회 등 다양한 기능이 있지만, Kiali의 가장 큰 장점은 **트래픽이 지나가는 것을 확인**할 수 있다는 점이다.
