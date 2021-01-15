@@ -21,6 +21,8 @@ $ cat all-deploy-services.yaml | wc -l
 
 ### 1.2. Etcd 백업
 
+#### 1.2.1 Etcd 백업 명령어 실행
+
 Etcd 백업 명령어를 수행한다. 
 
 * 형식: 
@@ -43,6 +45,8 @@ $ sudo ETCDCTL_API=3 ./etcdctl --endpoints 127.0.0.1:2379 --cacert=/etc/kubernet
 {"level":"info","ts":1610677781.0400813,"caller":"snapshot/v3_snapshot.go:152","msg":"saved","path":"snapshotdb"}
 Snapshot saved at snapshotdb
 ```
+
+#### 1.2.2 Etcd 백업 결과 조회
 
 위의 명령어를 통해 백업이 완료된 후에, 백업된 상태 정보를 조회하고 싶다면 다음 명령어를 사용하자.
 
@@ -82,6 +86,8 @@ Etcd 백업 → PV 백업 → YAML 백업을 순서대로 진행한다.
 ### 2.1. Etcd 복원
 
 #### 2.1.1. snapahot 가져오기
+
+미리 백업해둔 Etcd snapshot를 복사해온다.
 
 #### 2.1.2. Etcd 복원
 ```
@@ -125,6 +131,9 @@ snapahot restore {snapshot 경로}
 ```
 
 #### 2.1.3. 변경된 restore 확인
+
+위의 명령어를 통해 새롭게 생성된 `etcd-restore` 디렉토리를 확인한다.
+
 ```
 $ sudo ls /var/lib/etcd-restre/
 member
