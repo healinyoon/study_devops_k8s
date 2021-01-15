@@ -139,12 +139,75 @@ $ sudo ls /var/lib/etcd-restre/
 member
 ```
 
-### 2.2. Pod 정보 YAML 파일 복원
+#### 2.1.4. Etcd StaticPod 설정 변경
 
-#### 1. all-deploy-services.yaml 가져오기
+변경된 restore 정보를 반영해줘야 한다.
 
-#### 2. Resource 생성
+```
+sudo $ vi /etc/kubernetes/manifests/etcd.yaml
+```
+
+아래 내용을 수정해준다.
+
+* 변경된 restore 정보를 반영
+```
+수정 전)
+- --data-dir=/var/lib/etcd
+
+수정 후)
+- --data-dir=/var/lib/etcd-restore
+```
+
+* volume mount 경로 변경
+```
+수정 전)
+    volumeMounts:
+    - mountPath: /var/lib/etcd
+    (중략)
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/pki/etcd
 
 
+수정 후)
+    volumeMounts:
+    - mountPath: /var/lib/etcd-restore
+    (중략)
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/pki/etcd-restore
+```
 
+* token 정보 추가
+```
+- --initial-cluster-token={token} \
+```
+
+#### 2.1.5. Etcd StaticPod 설정 변경
+
+Etcd StaticPod 정보를 수정한 직후에는 `kubectl get pod` 명령어가 동작하지 않는다. apiserver가 Etcd를 잃어버려서 통신하지 못하기 때문이다. 
+
+Etcd 프로세스를 조회해보자.
+
+```
+$ sudo docker ps -a | grep etcd
+```
+
+etcd가 올라왔다면, 그 이후 부터는 `kubectl get pod` 명령어가 다시 동작한다.
+
+
+### 2.2. PV 복원
+
+PV는 각 PV의 유형별로 적절하게 복원해주면 된다.
+
+### 2.3. Pod 정보 YAML 파일 복원
+
+#### 2.3.1. all-deploy-services.yaml 가져오기
+
+미리 백업해둔 Kubernetes resource YAML 파일을 복사해온다.
+
+#### 2.3.2. Resource 생성
+```
+$ kubectl create -f all-deploy-services.yaml
+```
 
