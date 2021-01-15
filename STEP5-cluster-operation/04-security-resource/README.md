@@ -6,7 +6,8 @@ Kubernetes의 대부분의 access는 **Kube-apiserver**를 통하지 않고서�
 ![](/STEP5-cluster-operation/images/04-security-resource-kube-apiserver.png)
 
 ### Access 가능한 User
-* File - User 아이디와 패스워드(token)
+* 사용자를 위한 User Account(= Static Token File)
+    * File - User 아이디와 패스워드(token)
     * csv file을 만들어서 user 정보 저장
     * 가장 간단한 방법
     * kube-apiserver를 시작할 때 전달해주면, kube-apiserver가 file을 읽어들여서 아이디와 패스워드를 static하게 정해준다.
