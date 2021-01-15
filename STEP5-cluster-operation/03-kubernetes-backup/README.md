@@ -8,7 +8,7 @@ Kubernetes 백업 및 복원 방법에 대해 알아본다.
 
 각각의 백업 방법을 하나씩 살펴보자.
 
-# A. Pod 정보 YAML 파일 백업 / 복원
+# Pod 정보 YAML 파일 백업 / 복원
 
 Deployment, ReplicaSet, Service, Pod 등에 해당된다. 
 
@@ -28,7 +28,7 @@ $ kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
 $ kubectl create -f all-deploy-services.yaml
 ```
 
-# B. Etcd 데이터베이스 백업 / 복원
+# Etcd 데이터베이스 백업 / 복원
 
 ConfigMap, Secret, PVC 등에 해당된다. Etcd를 백업한다([ETCD 백업 공식 문서](https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster)). 
 
@@ -91,7 +91,7 @@ snapahot restore {snapshot 경로}
 
 그래도 정상 동작하지 않을 경우 docker log를 조회해서 문제의 원인을 파악하고 해결해야 한다.
 
-# C. Persistent Volume 백업 / 복원
+# Persistent Volume 백업 / 복원
 
 일반적인 방법으로 백업한다.
 
