@@ -96,11 +96,11 @@ snapahot restore {snapshot 경로}
 일반적인 방법으로 백업한다.
 
 
-
-
 # Kubernetes 백업 및 복원 실습
 
 ### 백업
+
+YAML 백업 → Etcd 백업 → PV 백업을 순서대로 진행한다.
 
 #### 1. Pod 정보 YAML 파일 백업
 
@@ -116,11 +116,19 @@ $ cat all-deploy-services.yaml | wc -l
 
 #### 2. Etcd 백업
 
-```
-형식)
-$ sudo ETCDCTL_API=3 ./etcdctl --endpoints 127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save {snapshot name}
+Etcd 백업 명령어를 수행한다. 
 
-예시)
+* 형식: 
+
+```
+$ sudo ETCDCTL_API=3 ./etcdctl --endpoints 127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save {snapshot name}
+```
+
+`--cacert`, `--cert`, `--key` 옵션의 값은 `/etc/kubernetes/pki/etcd` 경로에 저장되어 있다.
+
+* 예시: 
+
+```
 $ sudo ETCDCTL_API=3 ./etcdctl --endpoints 127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save snapshotdb
 {"level":"info","ts":1610677780.6238728,"caller":"snapshot/v3_snapshot.go:119","msg":"created temporary db file","path":"snapshotdb.part"}
 {"level":"info","ts":"2021-01-15T02:29:40.637Z","caller":"clientv3/maintenance.go:200","msg":"opened snapshot stream; downloading"}
@@ -131,15 +139,17 @@ $ sudo ETCDCTL_API=3 ./etcdctl --endpoints 127.0.0.1:2379 --cacert=/etc/kubernet
 Snapshot saved at snapshotdb
 ```
 
-`--cacert`, `--cert`, `--key` 옵션의 값은 `/etc/kubernetes/pki/etcd` 경로에 저장되어 있다.
+위의 명령어를 통해 백업이 완료된 후에, 백업된 상태 정보를 조회하고 싶다면 다음 명령어를 사용하자.
 
+* 형식:
 
-백업된 상태 정보를 조회하고 싶다면 다음 명령어를 사용하자.
 ```
-형식)
 $ sudo ETCDCTL_API=3 ./etcdctl --endpoints 127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot status {snapshot name}
+```
 
-예시)
+* 예시: 
+
+```
 $ sudo ETCDCTL_API=3 ./etcdctl --endpoints 127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot status snapshotdb
 2e633e9e, 27325346, 1340, 7.4 MB
 ```
@@ -154,13 +164,15 @@ $ sudo ETCDCTL_API=3 ./etcdctl --endpoints 127.0.0.1:2379 --cacert=/etc/kubernet
 +----------+----------+------------+------------+
 ```
 
-ETCD snapshot을 다른 서버에 백업하고 싶으면 `snapshotdb`을 복제하면 된다.
+ETCD snapshot을 다른 서버에 백업하고 싶으면 `snapshotdb`을 복제해서 옮기면 된다.
 
 #### 3. PV 백업
 
 PV는 각 PV의 유형별로 적절하게 백업해주면 된다.
 
 ### 복원
+
+Etcd 백업 → PV 백업 → YAML 백업을 순서대로 진행한다.
 
 #### 1. Etcd 복원
 
