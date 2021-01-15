@@ -25,7 +25,7 @@ passwd03,usr03,uid03
 
 ### 사용 방법
 
-Static toekn file이 적용된 후에는 바로 사용 가능하다. 
+Static toekn file이 적용된 후에는 바로 사용 가능하다. Static token file 적용 방법은 아래의 연습 문제에서 자세히 다룬다.
 
 #### Header에 추가하여 사용하는 방법
 HTTP 요청을 진행할 때, 다음의 내용을 header에 포함해서 사용해야 한다.
@@ -202,7 +202,7 @@ ffb85fd5df71   k8s.gcr.io/pause:3.2           "/pause"                 2 minutes
 
 kube-apiserver container가 정상 동작할 때까지 기다린다.
 
-#### 2.3. Kubectl에 등록하고 사용
+#### 2.5. Kubectl에 등록하고 사용
 
 아래의 명령어를 순차적으로 실행한다.
 
