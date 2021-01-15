@@ -18,9 +18,9 @@ Accounts Type에는 2가지 타입이 존재한다.
 
 > (참고) fiel.csv
 ```
-passwd01, usr01, uid01, "group1"
-passwd02, usr02, uid02
-passwd03, usr03, uid03
+passwd01,usr01,uid01,"group1"
+passwd02,usr02,uid02
+passwd03,usr03,uid03
 ```
 
 ### 사용 방법
