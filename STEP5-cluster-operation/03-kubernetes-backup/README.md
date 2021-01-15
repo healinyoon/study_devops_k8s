@@ -104,11 +104,14 @@ YAML 백업 → Etcd 백업 → PV 백업을 순서대로 진행한다.
 
 #### 1. Pod 정보 YAML 파일 백업
 
+모든 resource 정보를 YAML 파일로 출력한다.
+
 ```
 $ kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
 ```
 
-File 라인 수는 무려 31310 이다.
+모든 resource 정보를 포함하고 있는 File 라인 수는 무려 31310 이다.
+
 ```
 $ cat all-deploy-services.yaml | wc -l
 31310
