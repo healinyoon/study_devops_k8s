@@ -100,9 +100,9 @@ node/master evicted
 
 #### 3. kubeadm 버전 업그레이드
 ```
-$ sudo apt-mark unhold kubeadm && \
+$ sudo apt-mark unhold kubeadm kubelet && \
 sudo apt-get update && sudo apt-get install -y kubeadm=1.20.0-00 && sudo apt-get install -y kubelet=1.20.0-00 && \
-sudo apt-mark hold kubeadm
+sudo apt-mark hold kubeadm kubelet
 ```
 
 #### 4. 버전 확인
@@ -179,16 +179,16 @@ worker2   Ready    <none>                 128d   v1.19.0
 
 ### Worker Node 버전 업그레이드
 
-#### 1. kubeadm 업그레이드
-```
-$ sudo apt-mark unhold kubeadm && \
-sudo apt-get update && sudo apt-get install -y kubeadm=1.20.0-00 && sudo apt-get install -y kubelet=1.20.0-00 && \
-sudo apt-mark hold kubeadm
-```
-
-#### 2. Worker Node Drain
+#### 1. Worker Node Drain
 ```
 $ kubectl drain worker1 --ignore-daemonsets --delete-emptydir-data
+```
+
+#### 2. kubeadm 업그레이드
+```
+$ sudo apt-mark unhold kubeadm kubelet && \
+sudo apt-get update && sudo apt-get install -y kubeadm=1.20.0-00 && sudo apt-get install -y kubelet=1.20.0-00 && \
+sudo apt-mark hold kubeadm kubelet
 ```
 
 #### 3. kubeadm 업그레이드 호출
