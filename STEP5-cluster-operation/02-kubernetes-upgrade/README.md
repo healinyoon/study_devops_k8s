@@ -181,7 +181,7 @@ worker2   Ready    <none>                 128d   v1.19.0
 
 #### 1. Worker Node Drain
 ```
-$ kubectl drain worker1 --ignore-daemonsets --delete-emptydir-data
+$ kubectl drain worker1 --ignore-daemonsets
 ```
 
 #### 2. kubeadm 업그레이드
