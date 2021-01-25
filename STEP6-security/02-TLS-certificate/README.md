@@ -468,3 +468,18 @@ Switched to context "john@kubernetes".
 $ kubectl get pod
 Error from server (Forbidden): pods is forbidden: User "john" cannot list resource "pods" in API group "" in the namespace "dev1"
 ```
+
+### 풀이 심화
+
+위의 프로세스를 bash로 작성하여, 사용자 계정 생성 요청이 들어올 때 사용하면 유용할 것이다.
+
+```
+id=john
+o_name=dev1
+
+openssl genrsa -out $id.key 2048
+openssl req -new -key $id.key -out $id.csr -subj "/CN=$id/O=$o_name"
+sudo openssl x509 -req -in $id.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out $id.crt -days 365
+kubectl config set-credentials $id --client-certificate=$id.crt --client-key=$id.key
+kubectl config set-context $id@kubernetes --cluster=kubernetes --namespace=$o_name --user=$id
+```
