@@ -5,7 +5,7 @@
     * 5~6 계층은 SSL/TLS를 다루는데, SSL/TLS는 기존의 통신(HTTP, FTP, NNTP 등등..)을 지원하기 위해 만들어진 기술이다.
     * 데이터 암호화(기밀성), 데이터 무결성, 서버 인증 기능, 클라이언트 인증 기능 등을 지원한다.
 
-![](/STEP5-cluster-operation/images/04-sercurity-resource-tls-1.png)
+![](/STEP6-security/images/02-TLS-certificate-1.png)
 
 ### 인증 순서
 
@@ -36,7 +36,7 @@
 ##### 6. Server도 Client에게 Session 키를 준다.
 이로써 쌍방 간 Session 키를 가지고 있게 되고, 이를 통해 통신한다.
 
-![](/STEP5-cluster-operation/images/04-sercurity-resource-tls-2.png)  
+![](/STEP6-security/images/02-TLS-certificate-2.png)
 그림 출처: https://docs.pexip.com/admin/certificate_management.htm
 
 ### Kubernetes 인증서 위치
@@ -214,11 +214,11 @@ Certificate:
 
 `.conf`는 파일 내부에 인증서가 저장되어 있는 경우이다.
 
-![](/STEP5-cluster-operation/images/04-sercurity-resource-tls-3.png)  
+![](/STEP6-security/images/02-TLS-certificate-3.png)
  
 ### CA 목록
 
-![](/STEP5-cluster-operation/images/04-sercurity-resource-tls-4.png)  
+![](/STEP6-security/images/02-TLS-certificate-4.png)
 
 ### 모든 인증서 갱신하기
 
@@ -365,17 +365,94 @@ $ rm -rf ringu.csr
 
 ### Step 2. 인증 사용을 위해 쿠버네티스에 CRT를 등록
 
-#### 1) CRT를 사용할 수 있도록 `kubectl`을 사용하여 등록
+CRT를 사용할 수 있도록 `kubectl`을 사용하여 등록하자. 
+
+#### 1) 가장 먼저 사용자를 등록하고,
 
 ```
-$ kubectl config set-credentials ringu --client-certificate=.certs/ringu.crt --client-key=.certs/ringu.key
+$ kubectl config set-credentials ringu --client-certificate=ringu.crt --client-key=ringu.key
 User "ringu" set.
 ```
 
-#### 2) 다음 명령을 사용하여 사용자 권한으로 실행 가능
+#### 2) 생성한 사용자와 cluster를 연결해준다.
+```
+$ kubectl config set-context ringu@kubernetes --cluster=kubernetes --namespace=office --user=ringu
+Context "ringu@kubernetes" created.
+```
+
+일반적으로 `kubectl config set-context {context name}`에서 context name 형식을 `{사용자 명}@{도메인 정보(--cluster의 값과 일치)}`으로 한다.
+
+#### 3) 생성한 계정으로 로그인
+```
+$ kubectl config use-context ringu@kubernetes
+Switched to context "ringu@kubernetes".
+```
+
+로그인 한 다음부터는 `ringu`의 권한을 가지고 행동하게 된다.
+ 
+#### 4) 다음 명령을 사용하여 사용자 권한으로 실행 가능
 
 현재는 사용자에게 권한을 할당하지 않으면 실행되지 않는다.
 
 ```
-$ kubectl --context=ringu-context get pods
+$ kubectl get pod
+Error from server (Forbidden): pods is forbidden: User "ringu" cannot list resource "pods" in API group "" in the namespace "office"
+```
+
+#### 5) 다시 관리자 권한으로 돌아가자.
+
+```
+$ kubectl config use-context kubernetes-admin@kubernetes
+Switched to context "kubernetes-admin@kubernetes".
+```
+
+
+# 연습 문제
+dev1 팀에 john이 참여 했다. John을 위한 인증서를 만들고 승인해보자.
+
+```
+$ openssl genrsa -out john.key 2048
+Generating RSA private key, 2048 bit long modulus (2 primes)
+.........................+++++
+...........+++++
+e is 65537 (0x010001)
+```
+
+```
+$ openssl req -new -key john.key -out john.csr -subj "/CN=john/O=k8sproject"
+$ ls -al john*
+-rw-rw-r-- 1 ldccai ldccai  911 Jan 25 06:15 john.csr
+-rw------- 1 ldccai ldccai 1679 Jan 25 06:14 john.key
+```
+
+```
+$ sudo openssl x509 -req -in john.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out john.crt -days 365
+Signature ok
+subject=CN = john, O = k8sproject
+Getting CA Private Key
+
+$ ls -al john*
+-rw-r--r-- 1 root   root   1013 Jan 25 06:15 john.crt
+-rw-rw-r-- 1 ldccai ldccai  911 Jan 25 06:15 john.csr
+-rw------- 1 ldccai ldccai 1679 Jan 25 06:14 john.key
+```
+
+```
+$ kubectl config set-credentials john --client-certificate=john.crt --client-key=john.key
+User "john" set.
+```
+
+```
+$ kubectl config set-context john@kubernetes --cluster=kubernetes --namespace=dev1 --user=john
+Context "john@kubernetes" created.
+```
+
+```
+$ kubectl config use-context john@kubernetes
+Switched to context "john@kubernetes".
+```
+
+```
+$ kubectl get pod
+Error from server (Forbidden): pods is forbidden: User "john" cannot list resource "pods" in API group "" in the namespace "dev1"
 ```

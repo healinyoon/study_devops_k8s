@@ -25,7 +25,7 @@ passwd03,usr03,uid03
 
 ### 사용 방법
 
-Static toekn file이 적용된 후에는 바로 사용 가능하다. Static token file 적용 방법은 아래의 연습 문제에서 자세히 다룬다.
+Static toekn file이 적용된 후에는 바로 사용 가능하며, 적용 후 사용 방법은 다음과 같다(Static token file 적용 방법은 아래의 연습 문제에서 자세히 다룬다).
 
 #### Header에 추가하여 사용하는 방법
 HTTP 요청을 진행할 때, 다음의 내용을 header에 포함해서 사용해야 한다.
@@ -47,13 +47,13 @@ $ kubectl config set-context --cluster=kubernetes --namespace=frontend --user=us
 $ kubectl get pod --user user01
 ```
 
-`--cluster=kubernetes --namespace=frontend --user=user01` 여러 개의 Kubernets cluster를 사용하는 경우 유용하다.
+`--cluster=kubernetes`, `--namespace=frontend`, `--user=user01` 옵션은 여러 개의 Kubernets cluster를 사용하는 경우 유용하다.
 
 # Service Account
 
 ### 개요
 
-Pod에 별도의 설정을 주지 않으면 기본적인 Service Account가 생성된다.
+Pod에 별도의 설정을 주지 않으면 기본적인 Service Account가 생성된다. `default` Service Account를 조회해보면 다음과 같은 형식을 가지고 있다.
 ```
 $ kubectl get sa default -o yaml
 apiVersion: v1
@@ -219,8 +219,8 @@ Context "user01-context" created.
 ```
 
 * `set-context`에서 context의 의미
-    * ①에서 생성한 게정과 이 kubernetes 서버(cluster)를 연결하는 명령어
-    * 이 kubernetes 서버(cluster)에 접속할 때는 이 user를 사용하겠다를 **user01-context**에 등록합니다.
+    * ①에서 생성한 계정과 이 kubernetes 서버(cluster)를 연결하는 명령어
+    * 이 kubernetes 서버(cluster)에 접속할 때는 이 user(user01)를 사용하겠다를 **user01-context**에 등록합니다.
 * `--cluster=kubernetes`: kubernetes는 현재 우리가 사용하고 있는 cluster를 의미힌다.
 
 ③ 생성한 계정으로 로그인(admin -> user01 계정으로 switch)

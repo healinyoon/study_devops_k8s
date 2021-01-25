@@ -3,7 +3,7 @@
 모든 통신은 TLS로!  
 Kubernetes의 대부분의 access는 **Kube-apiserver**를 통하지 않고서는 불가능하다.
 
-![](/STEP5-cluster-operation/images/04-security-resource-kube-apiserver.png)
+![](/STEP6-security/images/kube-apiserver.png)
 
 ### Access 가능한 User
 * 사용자를 위한 User Account(= Static Token File)
