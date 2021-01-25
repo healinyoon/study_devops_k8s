@@ -47,7 +47,7 @@ Role은 Namespace 내부에 종속적인 반면에 ClusterRole은 Cluster 전체
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  namespace: office
+  namespace: default
   name: pod-reader
 rules:
 - apiGroups: [""] # "" indicates the core API group
@@ -55,50 +55,47 @@ rules:
   verbs: ["get", "watch", "list"]
 ```
 
-Role에는 apiGroups, resource, 작업 가능한 동작 등을 작성하게 된다. 작성 가능한 API의 종류는 공식 문서에서 확인할 수 있다.
+Role에는 apiGroups, resource, 작업 가능한 동작 등을 작성하게 된다. 작성 가능한 API의 종류는 공식 문서에서 확인할 수 있다. 참고로 apiGroups가 비어 있는 경우는 `core` API Groups을 의미한다. 
 
 * https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20 
 * https://kubernetes.io/docs/reference/access-authn-authz/rbac
 
 ### Role Binding: 사용자 권한 할당
 
-* RoleBinding을 사용하여 `office` Namespace에 대한 권한을 할당한다. // ClusterRoleBinding은 Namespace 설정 부분이 없다.
-* `kubectl create -f` 명령어를 사용한다.
+Role을 생성한 다음에는 RoleBinding을 생성하여 `ringu` 사용자에게 `default` Namespace에 대한 권한을 할당한다(참고로 ClusterRoleBinding은 Namespace 설정 부분이 없다).
 
 ```
 apiVersion: rbac.authorization.k8s.io/v1
-# This role binding allows "john" to read pods in the "office" namespace.
-# You need to already have a Role named "pod-reader" in that namespace.
 kind: RoleBinding
 metadata:
   name: read-pods
-  namespace: office
+  namespace: default
 subjects:                                   # 여러개의 subject를 입력 가능하다
-- kind: User
-  name: john # "name" is case sensitive
+- kind: User                                # 권한을 받을 대상의 정보를 입력한다(ServiceAccounts라면 ServiceAccounts를 입력)
+  name: ringu
   apiGroup: rbac.authorization.k8s.io
-roleRef:                                    # 참조하려는 Role 또는 ClusterRole에 대한 정보를 입력한다
+roleRef:                                    # 참조하려는 Role or ClusterRole에 대한 정보를 입력한다
   kind: Role                                # Role or ClusterRole
-  name: pod-reader                          # Binding 하려는 Role(또는 ClusterRole)의 이름과 일치시켜줘야 한다
+  name: pod-reader                          # Binding 하려는 Role(or ClusterRole)의 이름과 일치시켜줘야 한다
   apiGroup: rbac.authorization.k8s.io
 ```
 
 ### 사용자 권한 테스트
 
-아래의 명령어로 사용자의 권한을 테스트 해보자.
+아래의 명령어로 사용자의 권한을 테스트 해볼 수 있다.
 
 #### 성공해야 하는 명령어
 
 ```
-$ kubectl --context=ringu-context get pods -n office
-$ kubectl --context=ringu-context run --generator=pod-run/v1 nginx --image=nginx -n office
+$ kubectl --context=ringu@kubernetes get pods -n default
+$ kubectl --context=ringu@kubernetes get pods -n default -w
 ```
 
 #### 실패해야 하는 명령어
 
 ```
-$ kubectl --context=ringu-context get pods
-$ kubectl --context=ringu-context run --generator=pod-run/v1 nginx --image=nginx
+$ kubectl --context=ringu@kubernetes get pods -n kube-system
+$ kubectl --context=ringu@kubernetes get pods -n kube-system -w
 ```
 
 ### 권한의 종류
@@ -106,3 +103,195 @@ $ kubectl --context=ringu-context run --generator=pod-run/v1 nginx --image=nginx
 [쿠버네티스 공식 문서](https://kubernetes.io/docs/reference/access-authn-authz/authorization/)
 
 ![](/STEP6-security/images/04-RBAC-3.png)
+
+
+# RBAC 실습 1 - Role과 RoleBinding 생성하기
+
+### 1. Role 생성
+
+> pod-reader-role.yaml
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+```
+
+```
+$ kubectl create -f pod-reader-role.yaml
+role.rbac.authorization.k8s.io/pod-reader created
+```
+
+### 2. RoleBinding 생성
+
+> pod-reader-role-binding.yaml
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+- kind: User
+  name: ringu
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+```
+$ kubectl create -f pod-reader-role-binding.yaml
+rolebinding.rbac.authorization.k8s.io/read-pods created
+```
+
+### 3. 사용자 권한 테스트
+
+* get 권한 확인
+```
+$ kubectl get pod --context=ringu@kubernetes -n default
+NAME                              READY   STATUS    RESTARTS   AGE
+details-v1-79c697d759-85bfd       2/2     Running   0          12d
+http-go-7fdf786dff-jmvnb          2/2     Running   0          10d
+productpage-v1-65576bb7bf-psj4k   2/2     Running   0          10d
+ratings-v1-7d99676f7f-xnzz8       2/2     Running   0          10d
+reviews-v1-987d495c-r52wh         2/2     Running   0          12d
+reviews-v2-6c5bf657cf-bkkqw       2/2     Running   0          10d
+reviews-v3-5f7b9f4f77-2fpzb       2/2     Running   0          12d
+```
+
+* watch 모드 확인
+```
+$ kubectl get pod --context=ringu@kubernetes -n default -w
+NAME                              READY   STATUS    RESTARTS   AGE
+details-v1-79c697d759-85bfd       2/2     Running   0          12d
+http-go-7fdf786dff-jmvnb          2/2     Running   0          10d
+productpage-v1-65576bb7bf-psj4k   2/2     Running   0          10d
+ratings-v1-7d99676f7f-xnzz8       2/2     Running   0          10d
+reviews-v1-987d495c-r52wh         2/2     Running   0          12d
+reviews-v2-6c5bf657cf-bkkqw       2/2     Running   0          10d
+reviews-v3-5f7b9f4f77-2fpzb       2/2     Running   0          12d
+```
+
+# RBAC 실습 2 - ClusterRole 확인해보기
+
+### 1. admin ClusterRole 조회
+
+```
+$ kubectl get clusterrole | grep admin
+admin                                                                  2020-09-08T07:35:34Z
+cluster-admin                                                          2020-09-08T07:35:34Z
+system:aggregate-to-admin                                              2020-09-08T07:35:34Z
+system:kubelet-api-admin                                               2020-09-08T07:35:34Z
+```
+
+`cluster-admin` ClusterRole의 설정을 조회해보자.
+
+### 2. cluster-admin ClusterRole 설정 조회
+
+```
+$ kubectl get clusterrole cluster-admin -o yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  creationTimestamp: "2020-09-08T07:35:34Z"
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  managedFields:
+  - apiVersion: rbac.authorization.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:rbac.authorization.kubernetes.io/autoupdate: {}
+        f:labels:
+          .: {}
+          f:kubernetes.io/bootstrapping: {}
+      f:rules: {}
+    manager: kube-apiserver
+    operation: Update
+    time: "2020-09-08T07:35:34Z"
+  name: cluster-admin
+  resourceVersion: "44"
+  uid: 54de1649-40f0-402b-9be8-90506bf3d6fb
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- nonResourceURLs:
+  - '*'
+  verbs:
+  - '*'
+```
+
+cluster admin의 권한답게 모든 권한을 가지고 있고, namespace 설정이 별도로 존재하지 않는 것을 확인할 수 있다.
+
+
+### 3. admin ClusterRoleBinding 조회
+```
+$ kubectl get clusterrolebindings.rbac.authorization.k8s.io | grep admin
+cluster-admin                                          ClusterRole/cluster-admin                                                          139d
+gitlab-admin                                           ClusterRole/cluster-admin                                                          136d
+kubernetes-dashboard-rolebinding                       ClusterRole/cluster-admin                                                          13d
+tiller-admin                                           ClusterRole/cluster-admin                                                          136d
+```
+
+### 4. cluster-admin ClusterRoleBinding 설정 조회
+
+`cluster-admin` ClusterRoleBinding의 설정을 조회해보자.
+
+```
+$ kubectl get clusterrolebindings.rbac.authorization.k8s.io  cluster-admin -o yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  creationTimestamp: "2020-09-08T07:35:35Z"
+  labels:
+    kubernetes.io/bootstrapping: rbac-defaults
+  managedFields:
+  - apiVersion: rbac.authorization.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:rbac.authorization.kubernetes.io/autoupdate: {}
+        f:labels:
+          .: {}
+          f:kubernetes.io/bootstrapping: {}
+      f:roleRef:
+        f:apiGroup: {}
+        f:kind: {}
+        f:name: {}
+      f:subjects: {}
+    manager: kube-apiserver
+    operation: Update
+    time: "2020-09-08T07:35:35Z"
+  name: cluster-admin
+  resourceVersion: "102"
+  uid: 63895ee2-8025-4086-b953-865899b4702e
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: system:masters
+```
+
+`system:masters` 대상에게 권한을 부여하는 것을 볼 수 있다. `system:masters`에 대한 자세한 내용은 [쿠버네티스 공식 문서](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)를 참고한다.
