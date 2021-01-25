@@ -408,8 +408,14 @@ Switched to context "kubernetes-admin@kubernetes".
 
 
 # 연습 문제
+
+### 문제
 dev1 팀에 john이 참여 했다. John을 위한 인증서를 만들고 승인해보자.
 
+
+### 풀이
+
+##### 1. 개인 key 생성
 ```
 $ openssl genrsa -out john.key 2048
 Generating RSA private key, 2048 bit long modulus (2 primes)
@@ -418,6 +424,7 @@ Generating RSA private key, 2048 bit long modulus (2 primes)
 e is 65537 (0x010001)
 ```
 
+##### 2. CSR 생성
 ```
 $ openssl req -new -key john.key -out john.csr -subj "/CN=john/O=k8sproject"
 $ ls -al john*
@@ -425,6 +432,7 @@ $ ls -al john*
 -rw------- 1 ldccai ldccai 1679 Jan 25 06:14 john.key
 ```
 
+##### 3. CRT 발급
 ```
 $ sudo openssl x509 -req -in john.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out john.crt -days 365
 Signature ok
@@ -437,21 +445,25 @@ $ ls -al john*
 -rw------- 1 ldccai ldccai 1679 Jan 25 06:14 john.key
 ```
 
+##### 4. User 생성
 ```
 $ kubectl config set-credentials john --client-certificate=john.crt --client-key=john.key
 User "john" set.
 ```
 
+##### 5. Context 생성(Cluster와 User 이어주기)
 ```
 $ kubectl config set-context john@kubernetes --cluster=kubernetes --namespace=dev1 --user=john
 Context "john@kubernetes" created.
 ```
 
+##### 6. 생성한 Context로 로그인
 ```
 $ kubectl config use-context john@kubernetes
 Switched to context "john@kubernetes".
 ```
 
+##### 7. 생성한 Context 테스트
 ```
 $ kubectl get pod
 Error from server (Forbidden): pods is forbidden: User "john" cannot list resource "pods" in API group "" in the namespace "dev1"
