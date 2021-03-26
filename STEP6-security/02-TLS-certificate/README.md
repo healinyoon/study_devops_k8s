@@ -383,7 +383,7 @@ $ kubectl config set-context ringu@kubernetes --cluster=kubernetes --namespace=o
 Context "ringu@kubernetes" created.
 ```
 
-일반적으로 `kubectl config set-context {context name}`에서 context name 형식을 `{사용자 명}@{도메인 정보(--cluster의 값과 일치)}`으로 한다.
+일반적으로 `kubectl config set-context {context name}`에서 context name 형식을 `{사용자 명}@{도메인 정보(--cluster의 값과 일치)}`으로 한다. 이유는 사용자가 여러 클러스터를 사용해야 하는 경우도 있기 때문이다.
 
 #### 3) 생성한 계정으로 로그인
 ```
