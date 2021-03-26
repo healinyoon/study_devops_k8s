@@ -5,6 +5,8 @@ Kubernetes의 대부분의 access는 **Kube-apiserver**를 통하지 않고서�
 
 ![](/STEP6-security/images/kube-apiserver.png)
 
+**아래 분류 오류 -> 조정 필요(굿노트 A,B,C 분류 참고해서 수정하자)**
+
 ### Access 가능한 User
 * 사용자를 위한 User Account(= Static Token File)
     * File - User 아이디와 패스워드(token)
